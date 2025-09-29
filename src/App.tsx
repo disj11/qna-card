@@ -121,11 +121,17 @@ const Card = ({
     onFlip(question.id);
   };
 
+  const handleTouch = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onFlip(question.id);
+  };
+
   return (
     <div
       className={`card-container h-48 sm:h-52 md:h-56 ${shouldShowBack ? "flipped" : ""}`}
       onClick={handleClick}
-      onTouchEnd={handleClick}
+      onTouchEnd={handleTouch}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
