@@ -22,10 +22,7 @@ const dailyQuestions: Question[] = [
   { id: 14, text: "나를 동물에 비유한다면 어떤 동물일 것 같나요?" },
   { id: 15, text: "여행 갈 때 꼭 챙기는 물건이 있나요?" },
   { id: 16, text: "갑자기 하루의 휴가가 주어진다면 무엇을 하고 싶나요?" },
-  {
-    id: 17,
-    text: "세상에서 가장 쓸데없는 초능력을 가질 수 있다면, 어떤 능력을 원하나요?",
-  },
+  { id: 17, text: "초능력을 가질 수 있다면, 어떤 능력을 원하나요?" },
   { id: 18, text: "가장 좋아하는 계절과 그 이유는 무엇인가요?" },
   { id: 19, text: "내일 지구가 멸망한다면 오늘 무엇을 먹을 건가요?" },
   { id: 20, text: "가장 기억에 남는 여행지는 어디인가요?" },
@@ -224,27 +221,26 @@ function App() {
       <div className="relative z-10">
         {/* Header */}
         <header className="sticky top-0 z-40 bg-black/20 backdrop-blur-md border-b border-white/10">
-          <div className="container mx-auto px-4 py-6">
-            <div className="text-center space-y-4">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 drop-shadow-lg">
+          <div className="container mx-auto px-4 py-3">
+            <div className="text-center space-y-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 drop-shadow-lg">
                 💝 질문카드
               </h1>
-              <p className="text-white/90 text-lg sm:text-xl font-light">
-                서로를 더 가까이 알아가는 시간
-              </p>
 
-              {/* Admin Toggle */}
-              <div className="flex items-center justify-center space-x-3">
-                <span className="text-white/80 font-medium">관리자 모드</span>
+              {/* Show All Toggle */}
+              <div className="flex items-center justify-center space-x-2">
+                <span className="text-white/80 text-sm font-medium">
+                  모든 질문 보기
+                </span>
                 <button
                   onClick={toggleAdminMode}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-800 ${
                     adminMode ? "bg-purple-500" : "bg-white/20"
                   }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-lg ${
-                      adminMode ? "translate-x-6" : "translate-x-1"
+                    className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform shadow-lg ${
+                      adminMode ? "translate-x-5" : "translate-x-1"
                     }`}
                   />
                 </button>
@@ -254,14 +250,14 @@ function App() {
         </header>
 
         {/* Main Content */}
-        <main className="container mx-auto px-4 py-8 relative z-20">
+        <main className="container mx-auto px-4 py-4 relative z-20">
           {/* Daily Questions Section */}
-          <section className="mb-16">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3 drop-shadow-lg">
+          <section className="mb-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 drop-shadow-lg">
                 🌱 일상편
               </h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-green-400 to-blue-400 mx-auto rounded-full"></div>
+              <div className="w-16 h-0.5 bg-gradient-to-r from-green-400 to-blue-400 mx-auto rounded-full"></div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -285,11 +281,11 @@ function App() {
 
           {/* Love Questions Section */}
           <section>
-            <div className="text-center mb-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3 drop-shadow-lg">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 drop-shadow-lg">
                 💕 연애편
               </h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-pink-400 to-red-400 mx-auto rounded-full"></div>
+              <div className="w-16 h-0.5 bg-gradient-to-r from-pink-400 to-red-400 mx-auto rounded-full"></div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -313,10 +309,8 @@ function App() {
         </main>
 
         {/* Footer */}
-        <footer className="text-center py-8">
-          <p className="text-white/60 text-sm">
-            Made with ❤️ for better conversations
-          </p>
+        <footer className="text-center py-4">
+          <p className="text-white/60 text-sm">Made by [disj11] with ❤️</p>
         </footer>
       </div>
     </div>
