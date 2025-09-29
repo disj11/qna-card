@@ -114,6 +114,9 @@ const Card = ({
   cardType,
 }: CardProps) => {
   const shouldShowBack = adminMode || isFlipped;
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(
+    null,
+  );
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -121,17 +124,37 @@ const Card = ({
     onFlip(question.id);
   };
 
-  const handleTouch = (e: React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onFlip(question.id);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    setTouchStart({
+      x: touch.clientX,
+      y: touch.clientY,
+    });
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart) return;
+
+    const touch = e.changedTouches[0];
+    const deltaX = Math.abs(touch.clientX - touchStart.x);
+    const deltaY = Math.abs(touch.clientY - touchStart.y);
+
+    // Only trigger flip if touch movement is minimal (not a scroll)
+    if (deltaX < 10 && deltaY < 10) {
+      e.preventDefault();
+      e.stopPropagation();
+      onFlip(question.id);
+    }
+
+    setTouchStart(null);
   };
 
   return (
     <div
       className={`card-container h-48 sm:h-52 md:h-56 ${shouldShowBack ? "flipped" : ""}`}
       onClick={handleClick}
-      onTouchEnd={handleTouch}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
