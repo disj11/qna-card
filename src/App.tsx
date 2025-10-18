@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Routes, Route, useNavigate, useParams } from "react-router-dom";
 import Menu from "./pages/Menu";
 import QuestionCards from "./pages/QuestionCards";
 import QuestionCardsMultiplayer from "./pages/QuestionCardsMultiplayer";
@@ -59,112 +59,77 @@ const gameInfoMap: Record<string, GameInfo> = {
   },
 };
 
+const GameModeSelectorWrapper = () => {
+  const { gameId } = useParams<{ gameId: string }>();
+  if (!gameId || !gameInfoMap[gameId]) {
+    return <div>잘못된 접근입니다.</div>;
+  }
+  const gameInfo = gameInfoMap[gameId];
+  return (
+    <GameModeSelector
+      gameTitle={gameInfo.title}
+      gameEmoji={gameInfo.emoji}
+      gameDescription={gameInfo.description}
+      gradient={gameInfo.gradient}
+    />
+  );
+};
+
 function App() {
-  const [currentGame, setCurrentGame] = useState<string | null>(null);
-  const [gameMode, setGameMode] = useState<"single" | "multi" | null>(null);
+  const navigate = useNavigate();
 
-  const handleGameSelect = (gameId: string) => {
-    const gameInfo = gameInfoMap[gameId];
+  return (
+    <Routes>
+      <Route path="/" element={<Menu />} />
 
-    // If game doesn't have multiplayer, go directly to single player mode
-    if (!gameInfo?.hasMultiplayer) {
-      setCurrentGame(gameId);
-      setGameMode("single");
-    } else {
-      // Show mode selector for games with multiplayer
-      setCurrentGame(gameId);
-      setGameMode(null);
-    }
-  };
+      {/* Game Mode Selectors */}
+      <Route path="/game/:gameId" element={<GameModeSelectorWrapper />} />
 
-  const handleModeSelect = (mode: "single" | "multi") => {
-    setGameMode(mode);
-  };
-
-  const handleBack = () => {
-    // If in game, go back to mode selector
-    if (gameMode) {
-      const gameInfo = gameInfoMap[currentGame || ""];
-      if (gameInfo?.hasMultiplayer) {
-        setGameMode(null);
-      } else {
-        setCurrentGame(null);
-        setGameMode(null);
-      }
-    } else {
-      // If in mode selector, go back to menu
-      setCurrentGame(null);
-      setGameMode(null);
-    }
-  };
-
-  const handleBackToMenu = () => {
-    setCurrentGame(null);
-    setGameMode(null);
-  };
-
-  // Show mode selector if game is selected but mode is not
-  if (currentGame && !gameMode && gameInfoMap[currentGame]?.hasMultiplayer) {
-    const gameInfo = gameInfoMap[currentGame];
-    return (
-      <GameModeSelector
-        gameTitle={gameInfo.title}
-        gameEmoji={gameInfo.emoji}
-        gameDescription={gameInfo.description}
-        gradient={gameInfo.gradient}
-        onSelectMode={handleModeSelect}
-        onBack={handleBackToMenu}
+      {/* Single Player Games */}
+      <Route
+        path="/game/question-cards/single"
+        element={<QuestionCards onBack={() => navigate("/game/question-cards")} />}
       />
-    );
-  }
+      <Route
+        path="/game/truth-or-dare/single"
+        element={<TruthOrDare onBack={() => navigate("/game/truth-or-dare")} />}
+      />
+      <Route
+        path="/game/random-mission/single"
+        element={<RandomMission onBack={() => navigate("/game/random-mission")} />}
+      />
+      <Route
+        path="/game/balance-game/single"
+        element={<BalanceGame onBack={() => navigate("/game/balance-game")} />}
+      />
+      <Route
+        path="/game/word-chain/single"
+        element={<WordChain onBack={() => navigate("/game/word-chain")} />}
+      />
 
-  // Render the selected game with mode
-  if (currentGame === "question-cards" && gameMode === "single") {
-    return <QuestionCards onBack={handleBack} />;
-  }
-
-  if (currentGame === "question-cards" && gameMode === "multi") {
-    return <QuestionCardsMultiplayer onBack={handleBack} />;
-  }
-
-  if (currentGame === "truth-or-dare" && gameMode === "single") {
-    return <TruthOrDare onBack={handleBack} />;
-  }
-
-  if (currentGame === "truth-or-dare" && gameMode === "multi") {
-    return <TruthOrDareMultiplayer onBack={handleBack} />;
-  }
-
-  if (currentGame === "random-mission" && gameMode === "single") {
-    return <RandomMission onBack={handleBack} />;
-  }
-
-  if (currentGame === "random-mission" && gameMode === "multi") {
-    return <RandomMissionMultiplayer onBack={handleBack} />;
-  }
-
-  if (currentGame === "balance-game" && gameMode === "single") {
-    return <BalanceGame onBack={handleBack} />;
-  }
-
-  if (currentGame === "balance-game" && gameMode === "multi") {
-    return <BalanceGameMultiplayer onBack={handleBack} />;
-  }
-
-  if (currentGame === "word-chain" && gameMode === "single") {
-    return <WordChain onBack={handleBackToMenu} />;
-  }
-
-  if (currentGame === "word-chain" && gameMode === "multi") {
-    return <WordChainMultiplayer onBack={handleBack} />;
-  }
-
-  if (currentGame === "word-chain" && gameMode === "multi") {
-    return <WordChainMultiplayer onBack={handleBack} />;
-  }
-
-  // Default to menu
-  return <Menu onGameSelect={handleGameSelect} />;
+      {/* Multiplayer Games */}
+      <Route
+        path="/game/question-cards/multi"
+        element={<QuestionCardsMultiplayer onBack={() => navigate("/game/question-cards")} />}
+      />
+      <Route
+        path="/game/truth-or-dare/multi"
+        element={<TruthOrDareMultiplayer onBack={() => navigate("/game/truth-or-dare")} />}
+      />
+      <Route
+        path="/game/random-mission/multi"
+        element={<RandomMissionMultiplayer onBack={() => navigate("/game/random-mission")} />}
+      />
+      <Route
+        path="/game/balance-game/multi"
+        element={<BalanceGameMultiplayer onBack={() => navigate("/game/balance-game")} />}
+      />
+      <Route
+        path="/game/word-chain/multi"
+        element={<WordChainMultiplayer onBack={() => navigate("/game/word-chain")} />}
+      />
+    </Routes>
+  );
 }
 
 export default App;

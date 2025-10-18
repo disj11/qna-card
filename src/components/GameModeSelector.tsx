@@ -1,24 +1,31 @@
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface GameModeSelectorProps {
   gameTitle: string;
   gameEmoji: string;
   gameDescription: string;
   gradient: string;
-  onSelectMode: (mode: "single" | "multi") => void;
-  onBack: () => void;
 }
 
 export default function GameModeSelector({
   gameTitle,
   gameEmoji,
   gameDescription,
-  onSelectMode,
-  onBack,
 }: GameModeSelectorProps) {
   const [hoveredMode, setHoveredMode] = useState<"single" | "multi" | null>(
     null,
   );
+  const navigate = useNavigate();
+  const { gameId } = useParams<{ gameId: string }>();
+
+  const handleSelectMode = (mode: "single" | "multi") => {
+    navigate(`/game/${gameId}/${mode}`);
+  };
+
+  const handleBack = () => {
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
@@ -33,7 +40,7 @@ export default function GameModeSelector({
         <div className="max-w-4xl w-full">
           {/* Back Button */}
           <button
-            onClick={onBack}
+            onClick={handleBack}
             className="mb-6 flex items-center space-x-2 text-white/80 hover:text-white transition-colors group"
           >
             <svg
@@ -77,7 +84,7 @@ export default function GameModeSelector({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Single Player Mode */}
             <button
-              onClick={() => onSelectMode("single")}
+              onClick={() => handleSelectMode("single")}
               onMouseEnter={() => setHoveredMode("single")}
               onMouseLeave={() => setHoveredMode(null)}
               className="group relative animate-slide-up"
@@ -184,7 +191,7 @@ export default function GameModeSelector({
 
             {/* Multiplayer Mode */}
             <button
-              onClick={() => onSelectMode("multi")}
+              onClick={() => handleSelectMode("multi")}
               onMouseEnter={() => setHoveredMode("multi")}
               onMouseLeave={() => setHoveredMode(null)}
               className="group relative animate-slide-up"

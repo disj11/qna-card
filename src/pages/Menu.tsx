@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface GameOption {
   id: string;
@@ -7,10 +8,6 @@ interface GameOption {
   description: string;
   gradient: string;
   textColor: string;
-}
-
-interface MenuProps {
-  onGameSelect: (gameId: string) => void;
 }
 
 const games: GameOption[] = [
@@ -56,8 +53,13 @@ const games: GameOption[] = [
   },
 ];
 
-export default function Menu({ onGameSelect }: MenuProps) {
+export default function Menu() {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  const handleGameSelect = (gameId: string) => {
+    navigate(`/game/${gameId}`);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
@@ -87,7 +89,7 @@ export default function Menu({ onGameSelect }: MenuProps) {
           {games.map((game, index) => (
             <button
               key={game.id}
-              onClick={() => onGameSelect(game.id)}
+              onClick={() => handleGameSelect(game.id)}
               onMouseEnter={() => setHoveredCard(game.id)}
               onMouseLeave={() => setHoveredCard(null)}
               className="group relative animate-slide-up"
