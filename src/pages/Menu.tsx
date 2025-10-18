@@ -74,7 +74,10 @@ export default function Menu({ onGameSelect }: MenuProps) {
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 drop-shadow-lg mb-4 animate-slide-up">
             🎉 아이스브레이킹 게임
           </h1>
-          <p className="text-white/80 text-lg sm:text-xl animate-slide-up" style={{ animationDelay: "0.1s" }}>
+          <p
+            className="text-white/80 text-lg sm:text-xl animate-slide-up"
+            style={{ animationDelay: "0.1s" }}
+          >
             원하는 게임을 선택해주세요
           </p>
         </header>
@@ -140,7 +143,10 @@ export default function Menu({ onGameSelect }: MenuProps) {
         </div>
 
         {/* Footer */}
-        <footer className="text-center mt-12 animate-slide-up" style={{ animationDelay: "0.5s" }}>
+        <footer
+          className="text-center mt-12 animate-slide-up"
+          style={{ animationDelay: "0.5s" }}
+        >
           <p className="text-white/60 text-sm">Made by [disj11] with ❤️</p>
         </footer>
       </div>
