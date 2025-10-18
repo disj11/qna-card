@@ -3,7 +3,10 @@ import {
   P2PConnection,
   type Player,
   type GameMessage,
+  type MessageHandler,
 } from "../multiplayer/P2PConnection";
+
+export type { GameMessage };
 
 export interface MultiplayerState {
   isConnected: boolean;
