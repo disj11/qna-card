@@ -123,11 +123,30 @@ export default function QuestionCardsMultiplayer({
     "daily",
   );
 
+  const gameState = multiplayer.gameState as GameState | null;
+
   useEffect(() => {
     if (multiplayer.gameState) {
       setGameStarted(true);
     }
   }, [multiplayer.gameState]);
+
+  // Sync local category with shared game state
+  useEffect(() => {
+    if (gameState?.currentCategory && gameState.currentCategory !== currentCategory) {
+      setCurrentCategory(gameState.currentCategory);
+    }
+  }, [gameState?.currentCategory]);
+
+  // Scroll to the focused card
+  useEffect(() => {
+    if (gameState?.currentQuestionId) {
+      const cardElement = document.getElementById(
+        `card-${gameState.currentQuestionId}`,
+      );
+      cardElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [gameState?.currentQuestionId, currentCategory]);
 
   const handleCreateRoom = async () => {
     if (!nickname.trim()) {
@@ -165,29 +184,40 @@ export default function QuestionCardsMultiplayer({
   };
 
   const handleCardFlip = (questionId: number) => {
-    if (!multiplayer.isMyTurn()) return;
+    if (!multiplayer.isMyTurn() || !gameState) return;
 
-    const currentGameState = (multiplayer.gameState as GameState) || {
-      currentQuestionId: null,
-      flippedCards: [],
-      currentCategory: currentCategory,
-    };
+    // Prevent flipping if a card is already focused this turn
+    if (gameState.currentQuestionId !== null) {
+      return;
+    }
 
-    const newFlippedCards = currentGameState.flippedCards.includes(questionId)
-      ? currentGameState.flippedCards.filter((id) => id !== questionId)
-      : [...currentGameState.flippedCards, questionId];
+    // Prevent flipping a card that is already in flippedCards
+    if (gameState.flippedCards.includes(questionId)) {
+      return;
+    }
+
+    const isDaily = dailyQuestions.some((q) => q.id === questionId);
+    const category = isDaily ? "daily" : "love";
 
     const newState: GameState = {
-      ...currentGameState,
+      ...gameState,
       currentQuestionId: questionId,
-      flippedCards: newFlippedCards,
+      flippedCards: [...gameState.flippedCards, questionId],
+      currentCategory: category,
     };
 
     multiplayer.updateGameState(newState);
   };
 
   const handleNextTurn = () => {
-    if (!multiplayer.isMyTurn()) return;
+    if (!multiplayer.isMyTurn() || !gameState) return;
+
+    // Reset the focused card, but keep the flippedCards history
+    const newState: GameState = {
+      ...gameState,
+      currentQuestionId: null,
+    };
+    multiplayer.updateGameState(newState);
 
     const nextPlayerId = multiplayer.getNextPlayer();
     multiplayer.changeTurn(nextPlayerId);
@@ -357,7 +387,6 @@ export default function QuestionCardsMultiplayer({
   }
 
   // Game screen
-  const gameState = multiplayer.gameState as GameState | null;
   const questions =
     currentCategory === "daily" ? dailyQuestions : loveQuestions;
   const currentTurnPlayer = Array.from(multiplayer.players.values()).find(
@@ -446,15 +475,14 @@ export default function QuestionCardsMultiplayer({
               </div>
 
               {/* Next Turn Button */}
-              {multiplayer.isMyTurn() &&
-                (gameState as GameState | null)?.currentQuestionId && (
-                  <button
-                    onClick={handleNextTurn}
-                    className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all transform hover:scale-105 active:scale-95"
-                  >
-                    다음 사람 차례 넘기기 →
-                  </button>
-                )}
+              {multiplayer.isMyTurn() && gameState?.currentQuestionId && (
+                <button
+                  onClick={handleNextTurn}
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all transform hover:scale-105 active:scale-95"
+                >
+                  다음 사람 차례 넘기기 →
+                </button>
+              )}
             </div>
           </div>
         </header>
@@ -487,31 +515,29 @@ export default function QuestionCardsMultiplayer({
           {/* Question Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-8">
             {questions.map((question) => {
-              const isFlipped = (
-                gameState as GameState | null
-              )?.flippedCards.includes(question.id);
+              const isFlipped = gameState?.flippedCards.includes(question.id);
               const isCurrentCard =
-                (gameState as GameState | null)?.currentQuestionId ===
-                question.id;
+                gameState?.currentQuestionId === question.id;
 
               return (
                 <button
                   key={question.id}
+                  id={`card-${question.id}`}
                   onClick={() => handleCardFlip(question.id)}
-                  disabled={!multiplayer.isMyTurn()}
+                  disabled={!multiplayer.isMyTurn() || isFlipped}
                   className={`relative group ${
-                    !multiplayer.isMyTurn() ? "cursor-not-allowed" : ""
+                    !multiplayer.isMyTurn() || isFlipped
+                      ? "cursor-not-allowed"
+                      : ""
                   }`}
                 >
                   <div
                     className={`aspect-[3/4] rounded-2xl shadow-2xl transition-all duration-500 transform ${
-                      isFlipped ? "rotate-y-180" : ""
-                    } ${
                       isCurrentCard ? "ring-4 ring-yellow-400 scale-105" : ""
                     } ${
                       multiplayer.isMyTurn()
                         ? "hover:scale-105 active:scale-95"
-                        : "opacity-70"
+                        : ""
                     }`}
                     style={{
                       transformStyle: "preserve-3d",
