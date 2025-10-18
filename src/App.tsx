@@ -10,6 +10,9 @@ import BalanceGameMultiplayer from "./pages/BalanceGameMultiplayer";
 import WordChain from "./pages/WordChain";
 import GameModeSelector from "./components/GameModeSelector";
 
+import WordChainMultiplayer from "./pages/WordChainMultiplayer";
+import RandomMissionMultiplayer from "./pages/RandomMissionMultiplayer";
+
 interface GameInfo {
   title: string;
   emoji: string;
@@ -38,7 +41,7 @@ const gameInfoMap: Record<string, GameInfo> = {
     emoji: "🎲",
     description: "재미있는 랜덤 미션 수행",
     gradient: "from-green-500 to-emerald-500",
-    hasMultiplayer: false,
+    hasMultiplayer: true,
   },
   "balance-game": {
     title: "밸런스 게임",
@@ -52,7 +55,7 @@ const gameInfoMap: Record<string, GameInfo> = {
     emoji: "🔤",
     description: "초성으로 단어 맞추기",
     gradient: "from-indigo-500 to-purple-500",
-    hasMultiplayer: false,
+    hasMultiplayer: true,
   },
 };
 
@@ -132,8 +135,12 @@ function App() {
     return <TruthOrDareMultiplayer onBack={handleBack} />;
   }
 
-  if (currentGame === "random-mission") {
-    return <RandomMission onBack={handleBackToMenu} />;
+  if (currentGame === "random-mission" && gameMode === "single") {
+    return <RandomMission onBack={handleBack} />;
+  }
+
+  if (currentGame === "random-mission" && gameMode === "multi") {
+    return <RandomMissionMultiplayer onBack={handleBack} />;
   }
 
   if (currentGame === "balance-game" && gameMode === "single") {
@@ -144,8 +151,16 @@ function App() {
     return <BalanceGameMultiplayer onBack={handleBack} />;
   }
 
-  if (currentGame === "word-chain") {
+  if (currentGame === "word-chain" && gameMode === "single") {
     return <WordChain onBack={handleBackToMenu} />;
+  }
+
+  if (currentGame === "word-chain" && gameMode === "multi") {
+    return <WordChainMultiplayer onBack={handleBack} />;
+  }
+
+  if (currentGame === "word-chain" && gameMode === "multi") {
+    return <WordChainMultiplayer onBack={handleBack} />;
   }
 
   // Default to menu

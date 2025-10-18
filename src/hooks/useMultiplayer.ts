@@ -683,6 +683,19 @@ export const useMultiplayer = () => {
     return state.currentTurn === state.localPlayer?.id;
   }, [state.currentTurn, state.localPlayer]);
 
+  const onMessage = useCallback((handler: MessageHandler) => {
+    if (connectionRef.current) {
+      return connectionRef.current.onMessage(handler);
+    }
+    return () => {}; // Return a dummy unsubscribe function
+  }, []);
+
+  const sendMessage = useCallback((message: GameMessage) => {
+    if (connectionRef.current) {
+      connectionRef.current.sendMessage(message);
+    }
+  }, []);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -712,5 +725,7 @@ export const useMultiplayer = () => {
     getNextPlayer,
     areAllPlayersReady,
     isMyTurn,
+    onMessage,
+    sendMessage,
   };
 };
