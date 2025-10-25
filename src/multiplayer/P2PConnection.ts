@@ -74,7 +74,11 @@ export class P2PConnection {
               },
             }
           : {
-              // Production: use default PeerJS cloud server
+              // Production: use a reliable public PeerJS server
+              // For production apps, it's recommended to host your own PeerJS server
+              host: "peerjs-server.fly.dev",
+              secure: true,
+              port: 443,
               debug: 2,
               config: {
                 iceServers: [
@@ -157,7 +161,11 @@ export class P2PConnection {
               },
             }
           : {
-              // Production: use default PeerJS cloud server
+              // Production: use a reliable public PeerJS server
+              // For production apps, it's recommended to host your own PeerJS server
+              host: "peerjs-server.fly.dev",
+              secure: true,
+              port: 443,
               debug: 2,
               config: {
                 iceServers: [
