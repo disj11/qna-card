@@ -76,7 +76,7 @@ export class P2PConnection {
           : {
               // Production: use a reliable public PeerJS server
               // For production apps, it's recommended to host your own PeerJS server
-              host: "peerjs-server.fly.dev",
+              host: "0.peerjs.com",
               secure: true,
               port: 443,
               debug: 2,
@@ -163,7 +163,7 @@ export class P2PConnection {
           : {
               // Production: use a reliable public PeerJS server
               // For production apps, it's recommended to host your own PeerJS server
-              host: "peerjs-server.fly.dev",
+              host: "0.peerjs.com",
               secure: true,
               port: 443,
               debug: 2,
