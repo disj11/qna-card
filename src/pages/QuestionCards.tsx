@@ -259,14 +259,12 @@ export default function QuestionCards({ onBack }: QuestionCardsProps) {
                 </span>
                 <button
                   onClick={toggleAdminMode}
-                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                    adminMode ? "bg-purple-500" : "bg-white/20"
-                  }`}
+                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-800 ${adminMode ? "bg-purple-500" : "bg-white/20"
+                    }`}
                 >
                   <span
-                    className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform shadow-lg ${
-                      adminMode ? "translate-x-5" : "translate-x-1"
-                    }`}
+                    className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform shadow-lg ${adminMode ? "translate-x-5" : "translate-x-1"
+                      }`}
                   />
                 </button>
               </div>

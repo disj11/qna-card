@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "peer": "node peer-server.js",
-    "dev:full": "npm-run-all --parallel peer dev"
+    "dev:full": "npm-run-all --parallel peer dev",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\""
   },
   "dependencies": {
     "peerjs": "^1.5.5",

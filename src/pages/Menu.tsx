@@ -96,11 +96,10 @@ export default function Menu() {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div
-                className={`relative bg-gradient-to-br ${game.gradient} rounded-2xl p-8 shadow-2xl transition-all duration-300 transform ${
-                  hoveredCard === game.id
+                className={`relative bg-gradient-to-br ${game.gradient} rounded-2xl p-8 shadow-2xl transition-all duration-300 transform ${hoveredCard === game.id
                     ? "scale-105 shadow-3xl"
                     : "hover:scale-102"
-                } active:scale-95`}
+                  } active:scale-95`}
               >
                 {/* Shimmer effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>

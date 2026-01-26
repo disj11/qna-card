@@ -1,0 +1,26 @@
+{
+    "name": "아이스브레이킹 게임 모음",
+    "short_name": "아이스브레이킹",
+    "description": "친구들과 함께 즐기는 5가지 인터랙티브 게임",
+    "start_url": "/qna-card/",
+    "display": "standalone",
+    "background_color": "#1e1b4b",
+    "theme_color": "#6366f1",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/qna-card/vite.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "games",
+        "entertainment",
+        "social"
+    ],
+    "screenshots": [],
+    "lang": "ko-KR",
+    "dir": "ltr"
+}

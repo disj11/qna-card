@@ -1,51 +1,101 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>💝 질문카드 - 서로를 더 가까이 알아가는 시간</title>
-        <meta
-            name="description"
-            content="사람들과 친해지기 위한 질문카드 앱. 일상편과 연애편 질문으로 서로를 더 깊이 알아가세요."
-        />
-        <script type="text/javascript">
-            // Single Page Apps for GitHub Pages
-            // MIT License
-            // https://github.com/rafgraph/spa-github-pages
-            // This script checks to see if a redirect is present in the query string,
-            // and if so, it restores the longer url
-            // and removes the query string.
-            // It is stored in the browser's session history.
-            (function (l) {
-                if (l.search) {
-                    var q = {};
-                    l.search
-                        .slice(1)
-                        .split("&")
-                        .forEach(function (v) {
-                            var a = v.split("=");
-                            q[a[0]] = a
-                                .slice(1)
-                                .join("=")
-                                .replace(/~and~/g, "&");
-                        });
-                    if (q.p !== undefined) {
-                        window.history.replaceState(
-                            null,
-                            null,
-                            l.pathname.slice(0, -1) +
-                                (q.p || "") +
-                                (q.q ? "/" + q.q : "") +
-                                l.hash,
-                        );
-                    }
-                }
-            })(window.location);
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="manifest" href="/qna-card/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎉 아이스브레이킹 게임 모음 - 친구들과 함께하는 5가지 게임</title>
+    <meta name="description"
+        content="사람들과 친해지기 위한 5가지 인터랙티브 게임! 질문카드, 진실 혹은 거짓, 랜덤 미션, 밸런스 게임, 초성 게임으로 어색함을 깨고 즐거운 시간을 만들어보세요. 멀티플레이어 지원!" />
+    <meta name="keywords" content="아이스브레이킹, 게임, 질문카드, 밸런스게임, 친목도모, 팀빌딩, 멀티플레이어" />
+    <meta name="author" content="disj11" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://disj11.github.io/qna-card/" />
+    <meta property="og:title" content="🎉 아이스브레이킹 게임 모음" />
+    <meta property="og:description" content="친구들과 함께 즐기는 5가지 인터랙티브 게임! 질문카드, 진실 혹은 거짓, 랜덤 미션, 밸런스 게임, 초성 게임" />
+    <meta property="og:image" content="https://disj11.github.io/qna-card/vite.svg" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://disj11.github.io/qna-card/" />
+    <meta name="twitter:title" content="🎉 아이스브레이킹 게임 모음" />
+    <meta name="twitter:description" content="친구들과 함께 즐기는 5가지 인터랙티브 게임!" />
+    <meta name="twitter:image" content="https://disj11.github.io/qna-card/vite.svg" />
+
+    <!-- PWA -->
+    <meta name="theme-color" content="#6366f1" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://0.peerjs.com" />
+    <link rel="dns-prefetch" href="https://0.peerjs.com" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "아이스브레이킹 게임 모음",
+          "description": "사람들과 친해지기 위한 5가지 인터랙티브 게임 모음",
+          "url": "https://disj11.github.io/qna-card/",
+          "applicationCategory": "GameApplication",
+          "operatingSystem": "Any",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "KRW"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "disj11"
+          }
+        }
         </script>
-    </head>
-    <body>
-        <div id="root"></div>
-        <script type="module" src="/src/main.tsx"></script>
-    </body>
+    <script type="text/javascript">
+        // Single Page Apps for GitHub Pages
+        // MIT License
+        // https://github.com/rafgraph/spa-github-pages
+        // This script checks to see if a redirect is present in the query string,
+        // and if so, it restores the longer url
+        // and removes the query string.
+        // It is stored in the browser's session history.
+        (function (l) {
+            if (l.search) {
+                var q = {};
+                l.search
+                    .slice(1)
+                    .split("&")
+                    .forEach(function (v) {
+                        var a = v.split("=");
+                        q[a[0]] = a
+                            .slice(1)
+                            .join("=")
+                            .replace(/~and~/g, "&");
+                    });
+                if (q.p !== undefined) {
+                    window.history.replaceState(
+                        null,
+                        null,
+                        l.pathname.slice(0, -1) +
+                        (q.p || "") +
+                        (q.q ? "/" + q.q : "") +
+                        l.hash,
+                    );
+                }
+            }
+        })(window.location);
+    </script>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

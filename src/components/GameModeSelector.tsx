@@ -91,11 +91,10 @@ export default function GameModeSelector({
               style={{ animationDelay: "0.1s" }}
             >
               <div
-                className={`relative bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl border-2 transition-all duration-300 transform ${
-                  hoveredMode === "single"
+                className={`relative bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl border-2 transition-all duration-300 transform ${hoveredMode === "single"
                     ? "scale-105 border-white/40 bg-white/20"
                     : "border-white/20 hover:border-white/30"
-                } active:scale-95`}
+                  } active:scale-95`}
               >
                 {/* Glow effect */}
                 <div
@@ -198,11 +197,10 @@ export default function GameModeSelector({
               style={{ animationDelay: "0.2s" }}
             >
               <div
-                className={`relative bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl border-2 transition-all duration-300 transform ${
-                  hoveredMode === "multi"
+                className={`relative bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl border-2 transition-all duration-300 transform ${hoveredMode === "multi"
                     ? "scale-105 border-white/40 bg-white/20"
                     : "border-white/20 hover:border-white/30"
-                } active:scale-95`}
+                  } active:scale-95`}
               >
                 {/* Glow effect */}
                 <div
