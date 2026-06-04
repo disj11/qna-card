@@ -1,4 +1,5 @@
 import Peer from "peerjs";
+import { describePeerError, getPeerConfig } from "./peerConfig";
 
 type DataConnection = ReturnType<Peer["connect"]>;
 
@@ -53,43 +54,7 @@ export class P2PConnection {
       try {
         const peerId = roomId || this.generateRoomId();
 
-        // Check if running locally (for development)
-        const isDev =
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1";
-
-        // Use local PeerJS server in development for better reliability
-        const peerConfig = isDev
-          ? {
-              host: "localhost",
-              port: 9000,
-              path: "/",
-              secure: false,
-              debug: 2,
-              config: {
-                iceServers: [
-                  { urls: "stun:stun.l.google.com:19302" },
-                  { urls: "stun:stun1.l.google.com:19302" },
-                ],
-              },
-            }
-          : {
-              // Production: use a reliable public PeerJS server
-              // For production apps, it's recommended to host your own PeerJS server
-              host: "0.peerjs.com",
-              secure: true,
-              port: 443,
-              debug: 2,
-              config: {
-                iceServers: [
-                  { urls: "stun:stun.l.google.com:19302" },
-                  { urls: "stun:stun1.l.google.com:19302" },
-                  { urls: "stun:stun2.l.google.com:19302" },
-                  { urls: "stun:stun3.l.google.com:19302" },
-                  { urls: "stun:stun4.l.google.com:19302" },
-                ],
-              },
-            };
+        const peerConfig = getPeerConfig();
 
         this.peer = new Peer(peerId, peerConfig);
 
@@ -140,43 +105,7 @@ export class P2PConnection {
       try {
         const randomId = Math.random().toString(36).substring(2, 15);
 
-        // Check if running locally (for development)
-        const isDev =
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1";
-
-        // Use local PeerJS server in development for better reliability
-        const peerConfig = isDev
-          ? {
-              host: "localhost",
-              port: 9000,
-              path: "/",
-              secure: false,
-              debug: 2,
-              config: {
-                iceServers: [
-                  { urls: "stun:stun.l.google.com:19302" },
-                  { urls: "stun:stun1.l.google.com:19302" },
-                ],
-              },
-            }
-          : {
-              // Production: use a reliable public PeerJS server
-              // For production apps, it's recommended to host your own PeerJS server
-              host: "0.peerjs.com",
-              secure: true,
-              port: 443,
-              debug: 2,
-              config: {
-                iceServers: [
-                  { urls: "stun:stun.l.google.com:19302" },
-                  { urls: "stun:stun1.l.google.com:19302" },
-                  { urls: "stun:stun2.l.google.com:19302" },
-                  { urls: "stun:stun3.l.google.com:19302" },
-                  { urls: "stun:stun4.l.google.com:19302" },
-                ],
-              },
-            };
+        const peerConfig = getPeerConfig();
 
         this.peer = new Peer(randomId, peerConfig);
 
@@ -243,6 +172,10 @@ export class P2PConnection {
         reject(error);
       }
     });
+  }
+
+  getUserFriendlyError(error: unknown) {
+    return describePeerError(error);
   }
 
   /**

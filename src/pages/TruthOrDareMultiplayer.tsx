@@ -25,7 +25,7 @@ export default function TruthOrDareMultiplayer({
   const multiplayer = useMultiplayer();
   const [gameStarted, setGameStarted] = useState(false);
   const [setupMode, setSetupMode] = useState<"none" | "create" | "join">(
-    "none",
+    "none"
   );
   const [nickname, setNickname] = useState("");
   const [roomIdInput, setRoomIdInput] = useState("");
@@ -46,8 +46,10 @@ export default function TruthOrDareMultiplayer({
       alert("닉네임을 입력해주세요");
       return;
     }
-    await multiplayer.createRoom(nickname.trim());
-    setSetupMode("none");
+    const created = await multiplayer.createRoom(nickname.trim());
+    if (created) {
+      setSetupMode("none");
+    }
   };
 
   const handleJoinRoom = async () => {
@@ -59,11 +61,13 @@ export default function TruthOrDareMultiplayer({
       alert("방 코드를 입력해주세요");
       return;
     }
-    await multiplayer.joinRoom(
+    const joined = await multiplayer.joinRoom(
       nickname.trim(),
-      roomIdInput.trim().toUpperCase(),
+      roomIdInput.trim().toUpperCase()
     );
-    setSetupMode("none");
+    if (joined) {
+      setSetupMode("none");
+    }
   };
 
   const handleStartGame = () => {
@@ -177,7 +181,8 @@ export default function TruthOrDareMultiplayer({
   const isQuestionCreator =
     gameState && gameState.currentPlayerId === multiplayer.localPlayer?.id;
   const hasAnswered =
-    gameState && new Map(gameState.answers).has(multiplayer.localPlayer?.id || "");
+    gameState &&
+    new Map(gameState.answers).has(multiplayer.localPlayer?.id || "");
   const allAnswered =
     gameState && gameState.answers.length === multiplayer.players.size - 1;
   const isGameOver = gameState && gameState.round > gameState.totalRounds;
@@ -652,7 +657,7 @@ export default function TruthOrDareMultiplayer({
                                   {player?.nickname} {isCorrect ? "✓" : "✗"}
                                 </span>
                               );
-                            },
+                            }
                           )}
                         </div>
                       </div>
@@ -696,7 +701,7 @@ export default function TruthOrDareMultiplayer({
                         </div>
                       </div>
                     );
-                  },
+                  }
                 )}
               </div>
             </div>

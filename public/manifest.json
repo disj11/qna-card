@@ -9,7 +9,7 @@
     "orientation": "portrait-primary",
     "icons": [
         {
-            "src": "/qna-card/vite.svg",
+            "src": "/qna-card/app-icon.svg",
             "sizes": "any",
             "type": "image/svg+xml",
             "purpose": "any maskable"
@@ -20,7 +20,15 @@
         "entertainment",
         "social"
     ],
-    "screenshots": [],
+    "screenshots": [
+        {
+            "src": "/qna-card/app-icon.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "form_factor": "narrow",
+            "label": "아이스브레이킹 게임 앱 아이콘"
+        }
+    ],
     "lang": "ko-KR",
     "dir": "ltr"
 }

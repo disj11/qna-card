@@ -4,7 +4,9 @@ import {
   type Player,
   type GameMessage,
   type MessageHandler,
+  type DisconnectHandler,
 } from "../multiplayer/P2PConnection";
+import { describePeerError } from "../multiplayer/peerConfig";
 
 export type { GameMessage };
 
@@ -37,6 +39,8 @@ export interface EmojiReaction {
 
 export const useMultiplayer = () => {
   const connectionRef = useRef<P2PConnection | null>(null);
+  const messageHandlerRef = useRef<MessageHandler>(() => {});
+  const disconnectHandlerRef = useRef<DisconnectHandler>(() => {});
   const [state, setState] = useState<MultiplayerState>({
     isConnected: false,
     isHost: false,
@@ -66,7 +70,7 @@ export const useMultiplayer = () => {
       console.log("Attempting to create room...");
       const generatedRoomId = await connection.initializeAsHost(
         nickname,
-        roomId,
+        roomId
       );
       console.log("Room created successfully:", generatedRoomId);
 
@@ -98,7 +102,7 @@ export const useMultiplayer = () => {
       }
 
       // Setup message handler
-      connection.onMessage(handleMessage);
+      connection.onMessage((message) => messageHandlerRef.current(message));
 
       // Setup connection handler
       connection.onConnection((playerId) => {
@@ -106,16 +110,19 @@ export const useMultiplayer = () => {
       });
 
       // Setup disconnect handler
-      connection.onDisconnect(handleDisconnect);
+      connection.onDisconnect((playerId) =>
+        disconnectHandlerRef.current(playerId)
+      );
+
+      return true;
     } catch (err) {
       console.error("Error creating room:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
       setError(
-        `방 생성에 실패했습니다: ${errorMessage}\n\n잠시 후 다시 시도해주세요.`,
+        `방 생성에 실패했습니다: ${describePeerError(err)}\n\n잠시 후 다시 시도해주세요.`
       );
       connectionRef.current?.disconnect();
       connectionRef.current = null;
+      return false;
     } finally {
       setIsConnecting(false);
     }
@@ -159,19 +166,22 @@ export const useMultiplayer = () => {
       }
 
       // Setup message handler
-      connection.onMessage(handleMessage);
+      connection.onMessage((message) => messageHandlerRef.current(message));
 
       // Setup disconnect handler
-      connection.onDisconnect(handleDisconnect);
+      connection.onDisconnect((playerId) =>
+        disconnectHandlerRef.current(playerId)
+      );
+
+      return true;
     } catch (err) {
       console.error("Error joining room:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
       setError(
-        `방 참가에 실패했습니다: ${errorMessage}\n\n방 코드를 확인하거나 잠시 후 다시 시도해주세요.`,
+        `방 참가에 실패했습니다: ${describePeerError(err)}\n\n방 코드를 확인하거나 잠시 후 다시 시도해주세요.`
       );
       connectionRef.current?.disconnect();
       connectionRef.current = null;
+      return false;
     } finally {
       setIsConnecting(false);
     }
@@ -192,40 +202,6 @@ export const useMultiplayer = () => {
       });
     }
   }, [state.players, state.isHost, state.isConnected, state.localPlayer?.id]);
-
-  const handleMessage = useCallback((message: GameMessage) => {
-    console.log("Handling message:", message);
-
-    switch (message.type) {
-      case "player-join":
-        handlePlayerJoin(message);
-        break;
-      case "player-leave":
-        handlePlayerLeave(message);
-        break;
-      case "player-ready":
-        handlePlayerReady(message);
-        break;
-      case "player-list":
-        handlePlayerList(message);
-        break;
-      case "game-start":
-        handleGameStart(message);
-        break;
-      case "game-state":
-        handleGameState(message);
-        break;
-      case "chat":
-        handleChat(message);
-        break;
-      case "emoji":
-        handleEmoji(message);
-        break;
-      case "turn-change":
-        handleTurnChange(message);
-        break;
-    }
-  }, []);
 
   /**
    * Handle player join
@@ -390,7 +366,7 @@ export const useMultiplayer = () => {
     // Remove reaction after 3 seconds
     setTimeout(() => {
       setEmojiReactions((prev) =>
-        prev.filter((r) => r.timestamp !== reaction.timestamp),
+        prev.filter((r) => r.timestamp !== reaction.timestamp)
       );
     }, 3000);
   }, []);
@@ -404,6 +380,53 @@ export const useMultiplayer = () => {
       currentTurn: (message.data as { playerId: string }).playerId,
     }));
   }, []);
+
+  const handleMessage = useCallback(
+    (message: GameMessage) => {
+      console.log("Handling message:", message);
+
+      switch (message.type) {
+        case "player-join":
+          handlePlayerJoin(message);
+          break;
+        case "player-leave":
+          handlePlayerLeave(message);
+          break;
+        case "player-ready":
+          handlePlayerReady(message);
+          break;
+        case "player-list":
+          handlePlayerList(message);
+          break;
+        case "game-start":
+          handleGameStart(message);
+          break;
+        case "game-state":
+          handleGameState(message);
+          break;
+        case "chat":
+          handleChat(message);
+          break;
+        case "emoji":
+          handleEmoji(message);
+          break;
+        case "turn-change":
+          handleTurnChange(message);
+          break;
+      }
+    },
+    [
+      handleChat,
+      handleEmoji,
+      handleGameStart,
+      handleGameState,
+      handlePlayerJoin,
+      handlePlayerLeave,
+      handlePlayerList,
+      handlePlayerReady,
+      handleTurnChange,
+    ]
+  );
 
   /**
    * Handle disconnect
@@ -432,6 +455,11 @@ export const useMultiplayer = () => {
       return { ...prev, players, chatMessages };
     });
   }, []);
+
+  useEffect(() => {
+    messageHandlerRef.current = handleMessage;
+    disconnectHandlerRef.current = handleDisconnect;
+  }, [handleMessage, handleDisconnect]);
 
   /**
    * Send chat message
@@ -468,7 +496,7 @@ export const useMultiplayer = () => {
         ],
       }));
     },
-    [state.localPlayer],
+    [state.localPlayer]
   );
 
   /**
@@ -503,11 +531,11 @@ export const useMultiplayer = () => {
       // Remove reaction after 3 seconds
       setTimeout(() => {
         setEmojiReactions((prev) =>
-          prev.filter((r) => r.timestamp !== reaction.timestamp),
+          prev.filter((r) => r.timestamp !== reaction.timestamp)
         );
       }, 3000);
     },
-    [state.localPlayer],
+    [state.localPlayer]
   );
 
   /**
@@ -535,7 +563,7 @@ export const useMultiplayer = () => {
         localPlayer: prev.localPlayer ? { ...prev.localPlayer, isReady } : null,
       }));
     },
-    [state.localPlayer],
+    [state.localPlayer]
   );
 
   /**
@@ -571,7 +599,7 @@ export const useMultiplayer = () => {
         ],
       }));
     },
-    [state.isHost, state.localPlayer],
+    [state.isHost, state.localPlayer]
   );
 
   /**
@@ -596,7 +624,7 @@ export const useMultiplayer = () => {
         gameState,
       }));
     },
-    [state.localPlayer],
+    [state.localPlayer]
   );
 
   /**
@@ -623,7 +651,7 @@ export const useMultiplayer = () => {
         currentTurn: nextPlayerId,
       }));
     },
-    [state.localPlayer],
+    [state.localPlayer]
   );
 
   /**

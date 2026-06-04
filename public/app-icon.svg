@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">아이스브레이킹 게임 앱 아이콘</title>
+  <desc id="desc">말풍선 카드와 별이 있는 보라색 게임 앱 아이콘</desc>
+  <rect width="512" height="512" rx="96" fill="#4f46e5"/>
+  <path d="M112 154c0-28 22-50 50-50h188c28 0 50 22 50 50v126c0 28-22 50-50 50H238l-76 68v-68c-28 0-50-22-50-50V154z" fill="#fff"/>
+  <path d="M178 196h148M178 246h104" stroke="#4f46e5" stroke-width="28" stroke-linecap="round"/>
+  <path d="M368 120l14 32 34 4-26 22 8 34-30-18-30 18 8-34-26-22 34-4 14-32z" fill="#facc15"/>
+</svg>

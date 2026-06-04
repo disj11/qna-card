@@ -2,41 +2,7 @@ import { useState, useEffect } from "react";
 import { useMultiplayer } from "../hooks/useMultiplayer";
 import MultiplayerLobby from "../components/MultiplayerLobby";
 import ChatBox from "../components/ChatBox";
-
-interface BalanceQuestion {
-  id: number;
-  optionA: string;
-  optionB: string;
-  emoji: string;
-}
-
-const questions: BalanceQuestion[] = [
-  { id: 1, optionA: "평생 여름", optionB: "평생 겨울", emoji: "🌡️" },
-  { id: 2, optionA: "투명인간", optionB: "하늘을 나는 능력", emoji: "🦸" },
-  { id: 3, optionA: "과거로 가기", optionB: "미래로 가기", emoji: "⏰" },
-  {
-    id: 4,
-    optionA: "평생 아침형 인간",
-    optionB: "평생 저녁형 인간",
-    emoji: "🌅",
-  },
-  {
-    id: 5,
-    optionA: "부자이지만 불행",
-    optionB: "가난하지만 행복",
-    emoji: "💰",
-  },
-  { id: 6, optionA: "평생 짜장면", optionB: "평생 짬뽕", emoji: "🍜" },
-  {
-    id: 7,
-    optionA: "읽는 능력 상실",
-    optionB: "말하는 능력 상실",
-    emoji: "🗣️",
-  },
-  { id: 8, optionA: "10억 받기", optionB: "진정한 사랑 찾기", emoji: "❤️" },
-  { id: 9, optionA: "과거 기억 삭제", optionB: "미래 기억 삭제", emoji: "🧠" },
-  { id: 10, optionA: "평생 단 음식", optionB: "평생 짠 음식", emoji: "🍰" },
-];
+import { questions } from "../data/balanceQuestions";
 
 interface BalanceGameMultiplayerProps {
   onBack: () => void;
@@ -54,7 +20,7 @@ export default function BalanceGameMultiplayer({
   const multiplayer = useMultiplayer();
   const [gameStarted, setGameStarted] = useState(false);
   const [setupMode, setSetupMode] = useState<"none" | "create" | "join">(
-    "none",
+    "none"
   );
   const [nickname, setNickname] = useState("");
   const [roomIdInput, setRoomIdInput] = useState("");
@@ -71,8 +37,10 @@ export default function BalanceGameMultiplayer({
       alert("닉네임을 입력해주세요");
       return;
     }
-    await multiplayer.createRoom(nickname.trim());
-    setSetupMode("none");
+    const created = await multiplayer.createRoom(nickname.trim());
+    if (created) {
+      setSetupMode("none");
+    }
   };
 
   const handleJoinRoom = async () => {
@@ -84,11 +52,13 @@ export default function BalanceGameMultiplayer({
       alert("방 코드를 입력해주세요");
       return;
     }
-    await multiplayer.joinRoom(
+    const joined = await multiplayer.joinRoom(
       nickname.trim(),
-      roomIdInput.trim().toUpperCase(),
+      roomIdInput.trim().toUpperCase()
     );
-    setSetupMode("none");
+    if (joined) {
+      setSetupMode("none");
+    }
   };
 
   const handleStartGame = () => {
@@ -318,7 +288,7 @@ export default function BalanceGameMultiplayer({
   const getVotesForOption = (option: "A" | "B") => {
     if (!gameState) return [];
     return gameState.votes
-      .filter(([_, vote]) => vote.choice === option)
+      .filter(([, vote]) => vote.choice === option)
       .map(([playerId]) => multiplayer.players.get(playerId))
       .filter(Boolean);
   };

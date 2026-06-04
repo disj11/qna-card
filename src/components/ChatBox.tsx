@@ -44,9 +44,10 @@ export default function ChatBox({
 
   if (isMinimized) {
     return (
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-50">
         <button
           onClick={onToggleMinimize}
+          aria-label="채팅 열기"
           className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 active:scale-95 relative"
         >
           <svg
@@ -73,7 +74,7 @@ export default function ChatBox({
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-80 sm:w-96">
+    <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 left-4 sm:left-auto z-50 sm:w-96">
       <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 flex items-center justify-between">
@@ -96,6 +97,7 @@ export default function ChatBox({
           {onToggleMinimize && (
             <button
               onClick={onToggleMinimize}
+              aria-label="채팅 최소화"
               className="text-white/80 hover:text-white transition-colors"
             >
               <svg
@@ -163,6 +165,7 @@ export default function ChatBox({
                 <button
                   key={emoji}
                   onClick={() => handleEmojiClick(emoji)}
+                  aria-label={`${emoji} 이모지 보내기`}
                   className="text-2xl hover:scale-125 transition-transform active:scale-95"
                 >
                   {emoji}
@@ -183,6 +186,7 @@ export default function ChatBox({
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
               className="bg-white/10 hover:bg-white/20 p-2 rounded-lg transition-all"
               title="이모지"
+              aria-label="이모지 선택"
             >
               <span className="text-xl">😊</span>
             </button>
@@ -198,6 +202,7 @@ export default function ChatBox({
             <button
               type="submit"
               disabled={!inputMessage.trim()}
+              aria-label="메시지 보내기"
               className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               <svg

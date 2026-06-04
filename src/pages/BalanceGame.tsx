@@ -1,39 +1,5 @@
 import { useState } from "react";
-
-interface BalanceQuestion {
-  id: number;
-  optionA: string;
-  optionB: string;
-  emoji: string;
-}
-
-const questions: BalanceQuestion[] = [
-  { id: 1, optionA: "평생 여름", optionB: "평생 겨울", emoji: "🌡️" },
-  { id: 2, optionA: "투명인간", optionB: "하늘을 나는 능력", emoji: "🦸" },
-  { id: 3, optionA: "과거로 가기", optionB: "미래로 가기", emoji: "⏰" },
-  { id: 4, optionA: "평생 아침형 인간", optionB: "평생 저녁형 인간", emoji: "🌅" },
-  { id: 5, optionA: "부자이지만 불행", optionB: "가난하지만 행복", emoji: "💰" },
-  { id: 6, optionA: "평생 짜장면", optionB: "평생 짬뽕", emoji: "🍜" },
-  { id: 7, optionA: "읽는 능력 상실", optionB: "말하는 능력 상실", emoji: "🗣️" },
-  { id: 8, optionA: "10억 받기", optionB: "진정한 사랑 찾기", emoji: "❤️" },
-  { id: 9, optionA: "과거 기억 삭제", optionB: "미래 기억 삭제", emoji: "🧠" },
-  { id: 10, optionA: "평생 단 음식", optionB: "평생 짠 음식", emoji: "🍰" },
-  { id: 11, optionA: "텔레포트", optionB: "시간 정지", emoji: "⚡" },
-  { id: 12, optionA: "마음을 읽는 능력", optionB: "거짓말 탐지 능력", emoji: "🔮" },
-  { id: 13, optionA: "평생 해외여행", optionB: "평생 국내여행", emoji: "✈️" },
-  { id: 14, optionA: "10년 젊어지기", optionB: "10억 받기", emoji: "⏳" },
-  { id: 15, optionA: "평생 봄", optionB: "평생 가을", emoji: "🍂" },
-  { id: 16, optionA: "천재이지만 게으름", optionB: "평범하지만 부지런", emoji: "📚" },
-  { id: 17, optionA: "유명하지만 사생활 無", optionB: "평범하지만 자유로움", emoji: "📸" },
-  { id: 18, optionA: "과거의 실수 바로잡기", optionB: "미래 1년 미리보기", emoji: "🔭" },
-  { id: 19, optionA: "평생 치킨", optionB: "평생 피자", emoji: "🍕" },
-  { id: 20, optionA: "동물과 대화", optionB: "외국어 자동 습득", emoji: "🐶" },
-  { id: 21, optionA: "평생 영화만 보기", optionB: "평생 음악만 듣기", emoji: "🎬" },
-  { id: 22, optionA: "날씬하지만 먹는 즐거움 없음", optionB: "살찌지만 먹는 즐거움 유지", emoji: "🍔" },
-  { id: 23, optionA: "평생 샤워만", optionB: "평생 목욕만", emoji: "🚿" },
-  { id: 24, optionA: "하루 3시간 수면으로 충분", optionB: "아무리 자도 피곤", emoji: "😴" },
-  { id: 25, optionA: "100명의 지인", optionB: "3명의 진짜 친구", emoji: "👥" },
-];
+import { questions } from "../data/balanceQuestions";
 
 interface BalanceGameProps {
   onBack: () => void;
@@ -108,7 +74,9 @@ export default function BalanceGame({ onBack }: BalanceGameProps) {
                 <div className="bg-blue-500/20 rounded-xl p-4 border border-blue-400/30">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-white font-semibold">옵션 A</span>
-                    <span className="text-blue-400 font-bold text-xl">{aPercent}%</span>
+                    <span className="text-blue-400 font-bold text-xl">
+                      {aPercent}%
+                    </span>
                   </div>
                   <div className="w-full bg-white/10 rounded-full h-2">
                     <div
@@ -116,13 +84,17 @@ export default function BalanceGame({ onBack }: BalanceGameProps) {
                       style={{ width: `${aPercent}%` }}
                     ></div>
                   </div>
-                  <div className="text-white/70 text-sm mt-1">{aCount}번 선택</div>
+                  <div className="text-white/70 text-sm mt-1">
+                    {aCount}번 선택
+                  </div>
                 </div>
 
                 <div className="bg-pink-500/20 rounded-xl p-4 border border-pink-400/30">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-white font-semibold">옵션 B</span>
-                    <span className="text-pink-400 font-bold text-xl">{bPercent}%</span>
+                    <span className="text-pink-400 font-bold text-xl">
+                      {bPercent}%
+                    </span>
                   </div>
                   <div className="w-full bg-white/10 rounded-full h-2">
                     <div
@@ -130,7 +102,9 @@ export default function BalanceGame({ onBack }: BalanceGameProps) {
                       style={{ width: `${bPercent}%` }}
                     ></div>
                   </div>
-                  <div className="text-white/70 text-sm mt-1">{bCount}번 선택</div>
+                  <div className="text-white/70 text-sm mt-1">
+                    {bCount}번 선택
+                  </div>
                 </div>
               </div>
             </div>
@@ -211,7 +185,9 @@ export default function BalanceGame({ onBack }: BalanceGameProps) {
             {/* Question Display */}
             <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/20">
               <div className="text-center mb-8">
-                <div className="text-6xl sm:text-7xl mb-4">{currentQuestion.emoji}</div>
+                <div className="text-6xl sm:text-7xl mb-4">
+                  {currentQuestion.emoji}
+                </div>
                 <div className="text-xl sm:text-2xl text-white/90 font-medium">
                   무엇을 선택하시겠습니까?
                 </div>

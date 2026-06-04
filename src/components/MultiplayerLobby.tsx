@@ -1,5 +1,9 @@
 import { useState } from "react";
 import type { Player } from "../multiplayer/P2PConnection";
+import Button from "./common/Button";
+import GlassPanel from "./common/GlassPanel";
+import PageShell from "./common/PageShell";
+import StatusBadge from "./common/StatusBadge";
 
 interface MultiplayerLobbyProps {
   isHost: boolean;
@@ -32,17 +36,14 @@ export default function MultiplayerLobby({
   };
 
   const canStartGame = isHost && allPlayersReady && playerList.length >= 2;
+  const startDisabledReason =
+    playerList.length < 2
+      ? "최소 2명 이상의 참가자가 필요합니다"
+      : "모든 참가자가 준비될 때까지 기다려주세요";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-4 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-20 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
-      </div>
-
-      <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-3xl p-8 max-w-2xl w-full shadow-2xl border border-white/20">
+    <PageShell centered>
+      <GlassPanel size="lg" className="max-w-2xl w-full">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">🎮</div>
@@ -57,7 +58,7 @@ export default function MultiplayerLobby({
         </div>
 
         {/* Room Code */}
-        <div className="bg-white/10 rounded-2xl p-6 mb-6">
+        <GlassPanel variant="subtle" className="mb-6">
           <div className="text-center mb-3">
             <p className="text-white/70 text-sm mb-2">방 코드</p>
             <div className="flex items-center justify-center gap-3">
@@ -68,8 +69,9 @@ export default function MultiplayerLobby({
               </div>
               <button
                 onClick={handleCopyRoomId}
-                className="bg-white/20 hover:bg-white/30 p-3 rounded-xl transition-all transform hover:scale-105 active:scale-95"
+                className="bg-white/20 hover:bg-white/30 p-3 rounded-xl transition-all transform hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 title="복사"
+                aria-label="방 코드 복사"
               >
                 {copied ? (
                   <span className="text-green-400 text-xl">✓</span>
@@ -99,10 +101,10 @@ export default function MultiplayerLobby({
           <p className="text-white/60 text-xs text-center">
             친구에게 이 코드를 공유하세요
           </p>
-        </div>
+        </GlassPanel>
 
         {/* Player List */}
-        <div className="bg-white/10 rounded-2xl p-6 mb-6">
+        <GlassPanel variant="subtle" className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-white">
               참가자 ({playerList.length})
@@ -132,14 +134,10 @@ export default function MultiplayerLobby({
                         {player.nickname}
                       </span>
                       {player.id === localPlayer?.id && (
-                        <span className="text-xs bg-blue-500/50 px-2 py-0.5 rounded-full text-white">
-                          나
-                        </span>
+                        <StatusBadge tone="info">나</StatusBadge>
                       )}
                       {player.isHost && (
-                        <span className="text-xs bg-yellow-500/50 px-2 py-0.5 rounded-full text-white">
-                          👑 호스트
-                        </span>
+                        <StatusBadge tone="warning">👑 호스트</StatusBadge>
                       )}
                     </div>
                   </div>
@@ -148,7 +146,7 @@ export default function MultiplayerLobby({
                 {/* Ready status */}
                 <div>
                   {player.isReady ? (
-                    <span className="text-green-400 font-semibold flex items-center gap-1">
+                    <span className="text-green-300 font-semibold flex items-center gap-1">
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"
@@ -169,53 +167,44 @@ export default function MultiplayerLobby({
               </div>
             ))}
           </div>
-        </div>
+        </GlassPanel>
 
         {/* Ready Button (for non-host) */}
         {!isHost && localPlayer && (
-          <button
+          <Button
             onClick={() => onReady(!localPlayer.isReady)}
-            className={`w-full py-4 rounded-2xl font-bold text-lg transition-all transform hover:scale-105 active:scale-95 mb-4 ${
-              localPlayer.isReady
-                ? "bg-gray-500/50 text-white/70"
-                : "bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:shadow-lg"
-            }`}
+            variant={localPlayer.isReady ? "secondary" : "primary"}
+            tone="mission"
+            size="lg"
+            fullWidth
+            isSelected={localPlayer.isReady}
+            className="mb-4"
           >
             {localPlayer.isReady ? "준비 취소" : "준비 완료"}
-          </button>
+          </Button>
         )}
 
         {/* Start Game Button (for host) */}
         {isHost && (
           <div className="mb-4">
-            <button
+            <Button
+              id="start-game"
               onClick={onStartGame}
               disabled={!canStartGame}
-              className={`w-full py-4 rounded-2xl font-bold text-lg transition-all transform hover:scale-105 active:scale-95 ${
-                canStartGame
-                  ? "bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:shadow-lg"
-                  : "bg-gray-500/30 text-white/40 cursor-not-allowed"
-              }`}
+              tone="balance"
+              size="lg"
+              fullWidth
+              disabledReason={!canStartGame ? startDisabledReason : undefined}
             >
-              {canStartGame
-                ? "🎮 게임 시작"
-                : "모든 참가자가 준비될 때까지 기다려주세요"}
-            </button>
-            {playerList.length < 2 && (
-              <p className="text-yellow-400 text-sm text-center mt-2">
-                ⚠️ 최소 2명 이상의 참가자가 필요합니다
-              </p>
-            )}
+              🎮 게임 시작
+            </Button>
           </div>
         )}
 
         {/* Back Button */}
-        <button
-          onClick={onBack}
-          className="w-full bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-semibold transition-all"
-        >
+        <Button onClick={onBack} variant="secondary" fullWidth>
           나가기
-        </button>
+        </Button>
 
         {/* Tips */}
         <div className="mt-6 bg-blue-500/20 rounded-xl p-4 border border-blue-400/30">
@@ -224,7 +213,7 @@ export default function MultiplayerLobby({
             공유하면 누구나 입장할 수 있습니다.
           </p>
         </div>
-      </div>
-    </div>
+      </GlassPanel>
+    </PageShell>
   );
 }
