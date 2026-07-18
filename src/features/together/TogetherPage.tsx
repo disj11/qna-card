@@ -40,11 +40,9 @@ interface TogetherPageProps {
 }
 
 export default function TogetherPage({ onBack }: TogetherPageProps) {
-  const savedProgress = useMemo(loadSavedProgress, []);
+  const savedProgress = useMemo(() => loadSavedProgress(), []);
 
-  const [phase, setPhase] = useState<"intro" | "playing" | "summary">(
-    "intro"
-  );
+  const [phase, setPhase] = useState<"intro" | "playing" | "summary">("intro");
   const [names, setNames] = useState({ me: "나", partner: "상대방" });
   const [level, setLevel] = useState<QuestionLevel>(1);
   const [visited, setVisited] = useState<Record<QuestionLevel, number[]>>({
@@ -87,9 +85,7 @@ export default function TogetherPage({ onBack }: TogetherPageProps) {
   }, [phase, level, visited, names]);
 
   const totalAnswered = levels.reduce((sum, l) => sum + visited[l].length, 0);
-  const currentCard = questionsByLevel[level].find(
-    (q) => q.id === queueIds[0]
-  );
+  const currentCard = questionsByLevel[level].find((q) => q.id === queueIds[0]);
   const gateReached = isGateReached(level, visited[level].length);
   const nextLevel = nextLevelOf(level);
 
@@ -385,7 +381,9 @@ export default function TogetherPage({ onBack }: TogetherPageProps) {
                       ? "bg-white/[0.04] text-white/60 border-white/10 hover:bg-white/10"
                       : "bg-white/[0.02] text-white/25 border-white/5 cursor-not-allowed"
                 }`}
-                style={isActive ? { borderColor: levelMeta[l].color } : undefined}
+                style={
+                  isActive ? { borderColor: levelMeta[l].color } : undefined
+                }
               >
                 {unlocked ? levelMeta[l].emoji : "🔒"} {levelMeta[l].label}
               </button>

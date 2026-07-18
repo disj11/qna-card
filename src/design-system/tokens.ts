@@ -23,7 +23,8 @@ export const theme = {
 };
 
 export const surface = {
-  glass: "bg-white/[0.05] backdrop-blur-sm border border-white/10 shadow-xl text-white",
+  glass:
+    "bg-white/[0.05] backdrop-blur-sm border border-white/10 shadow-xl text-white",
   glassSubtle: "bg-white/[0.03] border border-white/10 text-white",
   dark: "bg-black/20 text-white",
   /** 질문 카드 전용 종이 질감 표면 */

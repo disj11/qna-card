@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMultiplayer } from "./hooks/useMultiplayer";
 import MultiplayerLobby from "./MultiplayerLobby";
 import ChatBox from "./ChatBox";
@@ -8,7 +8,11 @@ import PageShell from "../../components/PageShell";
 import SetupForm from "../../components/SetupForm";
 import StickyPageHeader from "../../components/StickyPageHeader";
 import QuestionFlipCard from "../question-deck/QuestionFlipCard";
-import { buildInitialState, computeNextState, type GameState } from "./gameState";
+import {
+  buildInitialState,
+  computeNextState,
+  type GameState,
+} from "./gameState";
 import { questionsByLevel, levelGateThreshold } from "../../data/questionCards";
 import { levelMeta } from "../../design-system/tokens";
 import type { QuestionLevel } from "../../types";
@@ -21,11 +25,8 @@ const levels: QuestionLevel[] = [1, 2, 3];
 /** .qcard-face의 opacity/transform 트랜지션 시간(index.css)과 반드시 맞춰야 함 */
 const CARD_TRANSITION_MS = 350;
 
-export default function MultiplayerPage({
-  onBack,
-}: MultiplayerPageProps) {
+export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
   const multiplayer = useMultiplayer();
-  const [gameStarted, setGameStarted] = useState(false);
   const [setupMode, setSetupMode] = useState<"none" | "create" | "join">(
     "none"
   );
@@ -36,11 +37,14 @@ export default function MultiplayerPage({
 
   const gameState = multiplayer.gameState as GameState | null;
 
-  useEffect(() => {
-    if (multiplayer.gameState) {
+  const [gameStarted, setGameStarted] = useState(false);
+  const [prevGameState, setPrevGameState] = useState(multiplayer.gameState);
+  if (multiplayer.gameState !== prevGameState) {
+    setPrevGameState(multiplayer.gameState);
+    if (multiplayer.gameState && !gameStarted) {
       setGameStarted(true);
     }
-  }, [multiplayer.gameState]);
+  }
 
   const handleCreateRoom = async () => {
     if (!nickname.trim()) {
@@ -95,7 +99,11 @@ export default function MultiplayerPage({
     setIsTransitioning(true);
     // 뒷면이 완전히 가려질 때까지(qcard-face 트랜지션 종료) 먼저 앞면으로 되돌린 뒤,
     // 그 다음에 실제 카드 데이터를 바꿔서 양쪽 화면 모두 페이드 도중 다음 질문이 비치지 않게 한다.
-    multiplayer.updateGameState({ ...gameState, isRevealed: false, pickResult: null });
+    multiplayer.updateGameState({
+      ...gameState,
+      isRevealed: false,
+      pickResult: null,
+    });
 
     window.setTimeout(() => {
       const newState = computeNextState(gameState, mark, currentId);
@@ -322,8 +330,7 @@ export default function MultiplayerPage({
         </div>
 
         <p className="text-center text-white/60 text-sm mb-4">
-          Level {gameState.level} ·{" "}
-          {gameState.visited[gameState.level].length}/
+          Level {gameState.level} · {gameState.visited[gameState.level].length}/
           {levelGateThreshold[gameState.level]} · 총 {totalAnswered}개 진행
         </p>
 

@@ -70,17 +70,19 @@ export default function SoloPreviewPage({ onBack }: SoloPreviewPageProps) {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-4">
-        {(
-          [
-            [1, level1Questions] as const,
-            [2, level2Questions] as const,
-            [3, level3Questions] as const,
-          ]
-        ).map(([level, questions], sectionIndex) => (
-          <section key={level} className={sectionIndex < 2 ? "mb-8" : undefined}>
+        {[
+          [1, level1Questions] as const,
+          [2, level2Questions] as const,
+          [3, level3Questions] as const,
+        ].map(([level, questions], sectionIndex) => (
+          <section
+            key={level}
+            className={sectionIndex < 2 ? "mb-8" : undefined}
+          >
             <div className="text-center mb-6">
               <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
-                {levelMeta[level].emoji} Level {level} · {levelMeta[level].label}
+                {levelMeta[level].emoji} Level {level} ·{" "}
+                {levelMeta[level].label}
               </h2>
               <div
                 className="w-16 h-0.5 mx-auto rounded-full"

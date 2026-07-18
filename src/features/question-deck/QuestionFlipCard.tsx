@@ -1,4 +1,9 @@
-import { useState, type KeyboardEvent, type MouseEvent, type TouchEvent } from "react";
+import {
+  useState,
+  type KeyboardEvent,
+  type MouseEvent,
+  type TouchEvent,
+} from "react";
 import { levelMeta } from "../../design-system/tokens";
 import type { Question, QuestionLevel } from "../../types";
 

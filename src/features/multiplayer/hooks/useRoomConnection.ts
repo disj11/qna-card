@@ -69,7 +69,9 @@ export function useRoomConnection() {
           handlersRef.current.onHostReady(player);
         }
 
-        connection.onMessage((message) => handlersRef.current.onMessage(message));
+        connection.onMessage((message) =>
+          handlersRef.current.onMessage(message)
+        );
         connection.onDisconnect((playerId) =>
           handlersRef.current.onDisconnect(playerId)
         );

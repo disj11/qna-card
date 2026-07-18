@@ -97,7 +97,13 @@ export const useMultiplayer = () => {
       onHostReady: handleHostReady,
       onClientReady: handleClientReady,
     });
-  }, [room, handleMessage, handleDisconnect, handleHostReady, handleClientReady]);
+  }, [
+    room,
+    handleMessage,
+    handleDisconnect,
+    handleHostReady,
+    handleClientReady,
+  ]);
 
   const leaveRoom = useCallback(() => {
     room.leaveRoom();

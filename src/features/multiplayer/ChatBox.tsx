@@ -146,7 +146,7 @@ export default function ChatBox({
                         })}
                       </span>
                     </div>
-                    <p className="text-white text-sm break-words">
+                    <p className="text-white text-sm wrap-break-word">
                       {msg.message}
                     </p>
                   </div>
