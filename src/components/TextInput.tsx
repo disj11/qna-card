@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes } from "react";
-import { focusRing, radius } from "../../design-system/tokens";
+import { focusRing, radius } from "../design-system/tokens";
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;

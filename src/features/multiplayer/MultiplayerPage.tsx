@@ -1,55 +1,29 @@
 import { useState, useEffect } from "react";
-import { useMultiplayer } from "../hooks/useMultiplayer";
-import MultiplayerLobby from "../components/MultiplayerLobby";
-import ChatBox from "../components/ChatBox";
-import Button from "../components/common/Button";
-import GlassPanel from "../components/common/GlassPanel";
-import PageShell from "../components/common/PageShell";
-import SetupForm from "../components/common/SetupForm";
-import { questionsByLevel, levelGateThreshold } from "../data/questionCards";
-import { levelMeta } from "../design-system/tokens";
-import type { QuestionLevel } from "../types";
+import { useMultiplayer } from "./hooks/useMultiplayer";
+import MultiplayerLobby from "./MultiplayerLobby";
+import ChatBox from "./ChatBox";
+import Button from "../../components/Button";
+import GlassPanel from "../../components/GlassPanel";
+import PageShell from "../../components/PageShell";
+import SetupForm from "../../components/SetupForm";
+import StickyPageHeader from "../../components/StickyPageHeader";
+import QuestionFlipCard from "../question-deck/QuestionFlipCard";
+import { buildInitialState, computeNextState, type GameState } from "./gameState";
+import { questionsByLevel, levelGateThreshold } from "../../data/questionCards";
+import { levelMeta } from "../../design-system/tokens";
+import type { QuestionLevel } from "../../types";
 
-interface QuestionCardsMultiplayerProps {
+interface MultiplayerPageProps {
   onBack: () => void;
-}
-
-interface GameState {
-  level: QuestionLevel;
-  queueIds: number[];
-  visited: Record<QuestionLevel, number[]>;
-  isRevealed: boolean;
-  finished: boolean;
-  pickResult: string | null;
 }
 
 const levels: QuestionLevel[] = [1, 2, 3];
 /** .qcard-face의 opacity/transform 트랜지션 시간(index.css)과 반드시 맞춰야 함 */
 const CARD_TRANSITION_MS = 350;
 
-function shuffle<T>(items: T[]): T[] {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
-function buildInitialState(): GameState {
-  return {
-    level: 1,
-    queueIds: shuffle(questionsByLevel[1].map((q) => q.id)),
-    visited: { 1: [], 2: [], 3: [] },
-    isRevealed: false,
-    finished: false,
-    pickResult: null,
-  };
-}
-
-export default function QuestionCardsMultiplayer({
+export default function MultiplayerPage({
   onBack,
-}: QuestionCardsMultiplayerProps) {
+}: MultiplayerPageProps) {
   const multiplayer = useMultiplayer();
   const [gameStarted, setGameStarted] = useState(false);
   const [setupMode, setSetupMode] = useState<"none" | "create" | "join">(
@@ -124,57 +98,7 @@ export default function QuestionCardsMultiplayer({
     multiplayer.updateGameState({ ...gameState, isRevealed: false, pickResult: null });
 
     window.setTimeout(() => {
-      const visited = mark
-        ? {
-            ...gameState.visited,
-            [gameState.level]: [
-              ...gameState.visited[gameState.level],
-              currentId,
-            ],
-          }
-        : gameState.visited;
-
-      const remainingQueue = gameState.queueIds.slice(1);
-      const gateReached =
-        visited[gameState.level].length >= levelGateThreshold[gameState.level];
-      const levelExhausted = remainingQueue.length === 0;
-      const nextLevel: QuestionLevel | null =
-        gameState.level < 3 ? ((gameState.level + 1) as QuestionLevel) : null;
-
-      let newState: GameState;
-
-      if (nextLevel && (gateReached || levelExhausted)) {
-        newState = {
-          level: nextLevel,
-          queueIds: shuffle(
-            questionsByLevel[nextLevel]
-              .map((q) => q.id)
-              .filter((id) => !visited[nextLevel].includes(id))
-          ),
-          visited,
-          isRevealed: false,
-          finished: false,
-          pickResult: null,
-        };
-      } else if (levelExhausted && !nextLevel) {
-        newState = {
-          ...gameState,
-          queueIds: remainingQueue,
-          visited,
-          isRevealed: false,
-          finished: true,
-          pickResult: null,
-        };
-      } else {
-        newState = {
-          ...gameState,
-          queueIds: remainingQueue,
-          visited,
-          isRevealed: false,
-          pickResult: null,
-        };
-      }
-
+      const newState = computeNextState(gameState, mark, currentId);
       multiplayer.updateGameState(newState);
       multiplayer.changeTurn(multiplayer.getNextPlayer());
       setIsTransitioning(false);
@@ -307,7 +231,7 @@ export default function QuestionCardsMultiplayer({
   // Finished screen
   if (gameState.finished) {
     return (
-      <PageShell tone="question" centered>
+      <PageShell centered>
         <GlassPanel size="lg" className="max-w-lg w-full text-center">
           <div className="text-6xl mb-4">🎉</div>
           <h1 className="text-3xl font-bold text-white mb-2 break-keep">
@@ -326,7 +250,7 @@ export default function QuestionCardsMultiplayer({
 
   // Game screen
   return (
-    <PageShell tone="question">
+    <PageShell>
       {/* Emoji Reactions Overlay */}
       <div className="fixed inset-0 pointer-events-none z-40">
         {multiplayer.emojiReactions.map((reaction, index) => (
@@ -344,62 +268,36 @@ export default function QuestionCardsMultiplayer({
         ))}
       </div>
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#2B222D]/90 backdrop-blur-md border-b border-white/10">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between mb-2">
-            <button
-              onClick={handleLeave}
-              className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors group"
-            >
-              <svg
-                className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              <span className="font-medium">나가기</span>
-            </button>
-
-            <div className="flex items-center gap-2">
-              <span className="text-white/50 text-sm">방:</span>
-              <span className="text-[#D9695A] font-mono font-bold">
-                {multiplayer.roomId}
-              </span>
-            </div>
+      <StickyPageHeader
+        title="💝 질문카드 (원거리 함께하기)"
+        onBack={handleLeave}
+        backLabel="나가기"
+        topRight={
+          <div className="flex items-center gap-2">
+            <span className="text-white/50 text-sm">방:</span>
+            <span className="text-[#D9695A] font-mono font-bold">
+              {multiplayer.roomId}
+            </span>
           </div>
-
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              💝 질문카드 (원거리 함께하기)
-            </h1>
-
-            {/* Current Turn Indicator */}
-            <div className="flex items-center justify-center gap-2">
-              <div
-                className={`px-4 py-2 rounded-full border ${
-                  multiplayer.isMyTurn()
-                    ? "bg-green-500/15 border-green-400/40"
-                    : "bg-white/[0.04] border-white/10"
-                }`}
-              >
-                <span className="text-white font-semibold">
-                  {multiplayer.isMyTurn()
-                    ? "🎯 내가 카드를 넘길 차례!"
-                    : `${currentTurnPlayer?.nickname || ""}님이 카드를 넘길 차례`}
-                </span>
-              </div>
-            </div>
+        }
+      >
+        {/* Current Turn Indicator */}
+        <div className="flex items-center justify-center gap-2">
+          <div
+            className={`px-4 py-2 rounded-full border ${
+              multiplayer.isMyTurn()
+                ? "bg-green-500/15 border-green-400/40"
+                : "bg-white/[0.04] border-white/10"
+            }`}
+          >
+            <span className="text-white font-semibold">
+              {multiplayer.isMyTurn()
+                ? "🎯 내가 카드를 넘길 차례!"
+                : `${currentTurnPlayer?.nickname || ""}님이 카드를 넘길 차례`}
+            </span>
           </div>
         </div>
-      </header>
+      </StickyPageHeader>
 
       <div className="container mx-auto px-4 py-4 max-w-2xl">
         {/* Level tabs (read-only indicator) */}
@@ -439,41 +337,14 @@ export default function QuestionCardsMultiplayer({
               </div>
             )}
 
-            <div
-              className={`qcard h-64 sm:h-72 mx-auto max-w-md ${
-                gameState.isRevealed ? "revealed" : ""
-              }`}
-              onClick={handleReveal}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleReveal();
-                }
-              }}
-            >
-              <div
-                className="qcard-face qcard-face--front"
-                style={{ borderTop: `4px solid ${levelMeta[gameState.level].color}` }}
-              >
-                <div className="question-mark">?</div>
-                <p className="text-sm text-[#211A17]/50">눌러서 확인하기</p>
-              </div>
-              <div
-                className="qcard-face qcard-face--back"
-                style={{ borderTop: `4px solid ${levelMeta[gameState.level].color}` }}
-              >
-                <div className="card-question-text text-lg sm:text-xl">
-                  {currentQuestion.text}
-                </div>
-                {currentQuestion.followUp && (
-                  <p className="mt-3 text-center text-sm text-[#211A17]/60 italic">
-                    💬 {currentQuestion.followUp}
-                  </p>
-                )}
-              </div>
-            </div>
+            <QuestionFlipCard
+              question={currentQuestion}
+              level={gameState.level}
+              revealed={gameState.isRevealed}
+              onReveal={handleReveal}
+              hint="눌러서 확인하기"
+              className="mx-auto max-w-md"
+            />
 
             <div className="flex justify-center gap-3 mt-6">
               <Button

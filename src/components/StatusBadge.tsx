@@ -3,7 +3,7 @@ import {
   feedbackToneStyles,
   radius,
   type FeedbackTone,
-} from "../../design-system/tokens";
+} from "../design-system/tokens";
 
 interface StatusBadgeProps {
   children: ReactNode;

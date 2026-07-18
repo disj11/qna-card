@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { radius, surface } from "../../design-system/tokens";
+import { radius, surface } from "../design-system/tokens";
 
 interface GlassPanelProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;

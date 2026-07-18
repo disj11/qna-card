@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { focusRing, motion, radius } from "../../design-system/tokens";
+import { focusRing, motion, radius } from "../design-system/tokens";
 
 interface GameCardProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: ReactNode;

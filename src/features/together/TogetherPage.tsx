@@ -1,29 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
-import Button from "../components/common/Button";
-import GlassPanel from "../components/common/GlassPanel";
-import PageShell from "../components/common/PageShell";
-import GameHeader from "../components/common/GameHeader";
+import Button from "../../components/Button";
+import GlassPanel from "../../components/GlassPanel";
+import PageShell from "../../components/PageShell";
+import GameHeader from "../../components/GameHeader";
+import QuestionFlipCard from "../question-deck/QuestionFlipCard";
 import {
-  questionsByLevel,
-  levelGateThreshold,
-} from "../data/questionCards";
-import { levelMeta } from "../design-system/tokens";
-import type { Question, QuestionLevel } from "../types";
+  buildQueueIds,
+  isGateReached,
+  nextLevelOf,
+} from "../question-deck/deckEngine";
+import { questionsByLevel, levelGateThreshold } from "../../data/questionCards";
+import { levelMeta } from "../../design-system/tokens";
+import type { QuestionLevel } from "../../types";
 
 const STORAGE_KEY = "qna-card:together-progress";
 /** .qcard-face의 opacity/transform 트랜지션 시간(index.css)과 반드시 맞춰야 함 */
 const CARD_TRANSITION_MS = 350;
 
 const levels: QuestionLevel[] = [1, 2, 3];
-
-function shuffle<T>(items: T[]): T[] {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
 
 interface SavedProgress {
   level: QuestionLevel;
@@ -41,11 +35,11 @@ function loadSavedProgress(): SavedProgress | null {
   }
 }
 
-interface QuestionDeckProps {
+interface TogetherPageProps {
   onBack: () => void;
 }
 
-export default function QuestionDeck({ onBack }: QuestionDeckProps) {
+export default function TogetherPage({ onBack }: TogetherPageProps) {
   const savedProgress = useMemo(loadSavedProgress, []);
 
   const [phase, setPhase] = useState<"intro" | "playing" | "summary">(
@@ -58,17 +52,14 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
     2: [],
     3: [],
   });
-  const [queue, setQueue] = useState<Question[]>([]);
+  const [queueIds, setQueueIds] = useState<number[]>([]);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [pickResult, setPickResult] = useState<string | null>(null);
   const [showLevelUpPrompt, setShowLevelUpPrompt] = useState(false);
 
   const buildQueue = (targetLevel: QuestionLevel, alreadyVisited: number[]) => {
-    const remaining = questionsByLevel[targetLevel].filter(
-      (q) => !alreadyVisited.includes(q.id)
-    );
-    setQueue(shuffle(remaining));
+    setQueueIds(buildQueueIds(targetLevel, alreadyVisited));
     setIsRevealed(false);
   };
 
@@ -96,9 +87,11 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
   }, [phase, level, visited, names]);
 
   const totalAnswered = levels.reduce((sum, l) => sum + visited[l].length, 0);
-  const currentCard = queue[0];
-  const gateReached = visited[level].length >= levelGateThreshold[level];
-  const nextLevel = level < 3 ? ((level + 1) as QuestionLevel) : null;
+  const currentCard = questionsByLevel[level].find(
+    (q) => q.id === queueIds[0]
+  );
+  const gateReached = isGateReached(level, visited[level].length);
+  const nextLevel = nextLevelOf(level);
 
   const advance = (idToMark?: number) => {
     if (isTransitioning) return;
@@ -114,12 +107,12 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
         : visited;
       if (idToMark) setVisited(updatedVisited);
 
-      const remainingQueue = queue.slice(1);
-      setQueue(remainingQueue);
+      const remainingQueue = queueIds.slice(1);
+      setQueueIds(remainingQueue);
       setIsTransitioning(false);
 
       const justReachedGate =
-        idToMark && updatedVisited[level].length >= levelGateThreshold[level];
+        idToMark && isGateReached(level, updatedVisited[level].length);
       const levelExhausted = remainingQueue.length === 0;
 
       if (nextLevel && (justReachedGate || levelExhausted)) {
@@ -133,7 +126,10 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
     }, CARD_TRANSITION_MS);
   };
 
-  const handleReveal = () => setIsRevealed(true);
+  const handleReveal = () => {
+    if (isRevealed || isTransitioning) return;
+    setIsRevealed(true);
+  };
 
   const handleAnswered = () => {
     if (!currentCard) return;
@@ -154,7 +150,7 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
 
   const stayOnLevel = () => {
     setShowLevelUpPrompt(false);
-    if (queue.length === 0) {
+    if (queueIds.length === 0) {
       buildQueue(level, visited[level]);
     }
   };
@@ -168,7 +164,7 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
     if (target === level || isTransitioning) return;
     const prevLevel = (target - 1) as QuestionLevel;
     const isUnlocked =
-      target === 1 || visited[prevLevel].length >= levelGateThreshold[prevLevel];
+      target === 1 || isGateReached(prevLevel, visited[prevLevel].length);
     if (!isUnlocked) return;
 
     setIsTransitioning(true);
@@ -202,7 +198,7 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
   // ---- Intro screen ----
   if (phase === "intro") {
     return (
-      <PageShell tone="question" centered>
+      <PageShell centered>
         <GlassPanel size="lg" className="max-w-lg w-full">
           <div className="text-center mb-6">
             <div className="text-6xl mb-4">💝</div>
@@ -280,14 +276,14 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
   // ---- Summary screen ----
   if (phase === "summary") {
     return (
-      <PageShell tone="question" centered>
+      <PageShell centered>
         <GlassPanel size="lg" className="max-w-lg w-full text-center">
           <div className="text-6xl mb-4">🎉</div>
           <h1 className="text-3xl font-bold text-white mb-2 break-keep">
             오늘 {totalAnswered}개의 질문을 나눴어요
           </h1>
           <p className="text-white/70 mb-6">
-            {level === 3 && visited[3].length >= levelGateThreshold[3]
+            {level === 3 && isGateReached(3, visited[3].length)
               ? "진심편까지 모두 나눴네요. 오늘 대화, 정말 좋았어요!"
               : "다음에 또 만나면, 이어서 더 깊은 이야기를 나눠봐요."}
           </p>
@@ -325,7 +321,7 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
   // ---- Level-up interstitial ----
   if (showLevelUpPrompt) {
     return (
-      <PageShell tone="question" centered>
+      <PageShell centered>
         <GlassPanel size="lg" className="max-w-md w-full text-center">
           <div className="text-6xl mb-4">{levelMeta[level].emoji}</div>
           <h2 className="text-2xl font-bold text-white mb-2">
@@ -356,7 +352,7 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
 
   // ---- Playing screen ----
   return (
-    <PageShell tone="question">
+    <PageShell>
       <div className="container mx-auto px-4 py-4 max-w-2xl">
         <GameHeader
           title="한 기기로 함께"
@@ -375,7 +371,7 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
           {levels.map((l) => {
             const prevLevel = (l - 1) as QuestionLevel;
             const unlocked =
-              l === 1 || visited[prevLevel].length >= levelGateThreshold[prevLevel];
+              l === 1 || isGateReached(prevLevel, visited[prevLevel].length);
             const isActive = l === level;
             return (
               <button
@@ -412,45 +408,14 @@ export default function QuestionDeck({ onBack }: QuestionDeckProps) {
               </div>
             )}
 
-            <div
-              className={`qcard h-64 sm:h-72 mx-auto max-w-md ${
-                isRevealed ? "revealed" : ""
-              }`}
-              onClick={() => !isRevealed && !isTransitioning && handleReveal()}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (
-                  (e.key === "Enter" || e.key === " ") &&
-                  !isRevealed &&
-                  !isTransitioning
-                ) {
-                  e.preventDefault();
-                  handleReveal();
-                }
-              }}
-            >
-              <div
-                className="qcard-face qcard-face--front"
-                style={{ borderTop: `4px solid ${levelMeta[level].color}` }}
-              >
-                <div className="question-mark">?</div>
-                <p className="text-sm text-[#211A17]/50">눌러서 확인하기</p>
-              </div>
-              <div
-                className="qcard-face qcard-face--back"
-                style={{ borderTop: `4px solid ${levelMeta[level].color}` }}
-              >
-                <div className="card-question-text text-lg sm:text-xl">
-                  {currentCard.text}
-                </div>
-                {currentCard.followUp && (
-                  <p className="mt-3 text-center text-sm text-[#211A17]/60 italic">
-                    💬 {currentCard.followUp}
-                  </p>
-                )}
-              </div>
-            </div>
+            <QuestionFlipCard
+              question={currentCard}
+              level={level}
+              revealed={isRevealed}
+              onReveal={handleReveal}
+              hint="눌러서 확인하기"
+              className="mx-auto max-w-md"
+            />
 
             <div className="flex justify-center gap-3 mt-6">
               <Button onClick={pickWhoAnswersFirst} variant="secondary">

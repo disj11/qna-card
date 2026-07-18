@@ -1,6 +1,4 @@
-import type { GameId, QuestionLevel } from "../types";
-
-export type DesignTone = "brand" | "question";
+import type { QuestionLevel } from "../types";
 
 /** 레벨별 은은한 포인트 컬러 — 카드 전체가 아닌 칩/테두리에만 사용 */
 export const levelMeta: Record<
@@ -14,42 +12,14 @@ export const levelMeta: Record<
 
 export type FeedbackTone = "info" | "success" | "warning" | "danger";
 
-export interface GameTheme {
-  tone: DesignTone;
-  gameId?: GameId;
-  background: string;
-  accent: string;
-  accentText: string;
-  focusRing: string;
-  softSurface: string;
-  border: string;
-}
-
 /** 차분한 다크 톤 하나만 사용 — 짙은 자흑 배경 + 로즈 계열 단일 포인트 컬러 */
-export const themeByTone: Record<DesignTone, GameTheme> = {
-  brand: {
-    tone: "brand",
-    background: "bg-[#2B222D]",
-    accent: "bg-[#D9695A] hover:bg-[#C15848]",
-    accentText: "text-[#FBF1E7]",
-    focusRing: "focus-visible:ring-[#D9695A]/60",
-    softSurface: "bg-white/[0.04]",
-    border: "border-white/10",
-  },
-  question: {
-    tone: "question",
-    gameId: "question-cards",
-    background: "bg-[#2B222D]",
-    accent: "bg-[#D9695A] hover:bg-[#C15848]",
-    accentText: "text-[#FBF1E7]",
-    focusRing: "focus-visible:ring-[#D9695A]/60",
-    softSurface: "bg-white/[0.04]",
-    border: "border-white/10",
-  },
-};
-
-export const gameToneById: Record<GameId, DesignTone> = {
-  "question-cards": "question",
+export const theme = {
+  background: "bg-[#2B222D]",
+  accent: "bg-[#D9695A] hover:bg-[#C15848]",
+  accentText: "text-[#FBF1E7]",
+  focusRing: "focus-visible:ring-[#D9695A]/60",
+  softSurface: "bg-white/[0.04]",
+  border: "border-white/10",
 };
 
 export const surface = {

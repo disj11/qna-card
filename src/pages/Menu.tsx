@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import GameCard from "../components/common/GameCard";
-import GlassPanel from "../components/common/GlassPanel";
-import PageShell from "../components/common/PageShell";
+import GameCard from "../components/GameCard";
+import GlassPanel from "../components/GlassPanel";
+import PageShell from "../components/PageShell";
 
 const steps = [
   { n: 1, text: "마주 앉아서 폰 하나를 같이 봐요" },
@@ -13,7 +13,7 @@ export default function Menu() {
   const navigate = useNavigate();
 
   return (
-    <PageShell tone="question">
+    <PageShell>
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <header className="text-center mb-10">

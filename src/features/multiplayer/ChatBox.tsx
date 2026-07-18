@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import type { ChatMessage } from "../hooks/useMultiplayer";
+import type { ChatMessage } from "./hooks/useChat";
 
 interface ChatBoxProps {
   messages: ChatMessage[];

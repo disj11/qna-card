@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import EmptyState from "../components/common/EmptyState";
-import PageShell from "../components/common/PageShell";
+import EmptyState from "../components/EmptyState";
+import PageShell from "../components/PageShell";
 
 interface NotFoundProps {
   title?: string;

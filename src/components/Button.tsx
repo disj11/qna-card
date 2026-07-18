@@ -1,10 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import {
-  focusRing,
-  motion,
-  themeByTone,
-  type DesignTone,
-} from "../../design-system/tokens";
+import { focusRing, motion, theme } from "../design-system/tokens";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** 버튼 내용 */
@@ -13,8 +8,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "danger" | "ghost";
   /** 버튼 크기 */
   size?: "sm" | "md" | "lg";
-  /** 버튼 색상 톤 */
-  tone?: DesignTone;
   /** 전체 너비 여부 */
   fullWidth?: boolean;
   /** 로딩 상태 */
@@ -32,7 +25,6 @@ export default function Button({
   children,
   variant = "primary",
   size = "md",
-  tone = "brand",
   fullWidth = false,
   isLoading = false,
   isSelected = false,
@@ -41,7 +33,6 @@ export default function Button({
   className = "",
   ...props
 }: ButtonProps) {
-  const theme = themeByTone[tone];
   const baseStyles = `inline-flex items-center justify-center font-medium rounded-xl ${motion.interactive} ${focusRing} ${theme.focusRing} disabled:opacity-50 disabled:cursor-not-allowed`;
 
   const variantStyles = {

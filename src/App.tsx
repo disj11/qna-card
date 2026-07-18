@@ -1,9 +1,9 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Menu from "./pages/Menu";
-import QuestionCards from "./pages/QuestionCards";
-import QuestionDeck from "./pages/QuestionDeck";
-import QuestionCardsMultiplayer from "./pages/QuestionCardsMultiplayer";
-import ErrorBoundary from "./components/common/ErrorBoundary";
+import SoloPreviewPage from "./features/solo-preview/SoloPreviewPage";
+import TogetherPage from "./features/together/TogetherPage";
+import MultiplayerPage from "./features/multiplayer/MultiplayerPage";
+import ErrorBoundary from "./components/ErrorBoundary";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -15,15 +15,15 @@ function App() {
         <Route path="/" element={<Menu />} />
         <Route
           path="/together"
-          element={<QuestionDeck onBack={() => navigate("/")} />}
+          element={<TogetherPage onBack={() => navigate("/")} />}
         />
         <Route
           path="/solo"
-          element={<QuestionCards onBack={() => navigate("/")} />}
+          element={<SoloPreviewPage onBack={() => navigate("/")} />}
         />
         <Route
           path="/remote"
-          element={<QuestionCardsMultiplayer onBack={() => navigate("/")} />}
+          element={<MultiplayerPage onBack={() => navigate("/")} />}
         />
         <Route path="*" element={<NotFound />} />
       </Routes>

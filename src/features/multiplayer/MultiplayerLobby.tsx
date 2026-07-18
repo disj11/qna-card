@@ -1,9 +1,9 @@
 import { useState } from "react";
-import type { Player } from "../multiplayer/P2PConnection";
-import Button from "./common/Button";
-import GlassPanel from "./common/GlassPanel";
-import PageShell from "./common/PageShell";
-import StatusBadge from "./common/StatusBadge";
+import type { Player } from "./lib/P2PConnection";
+import Button from "../../components/Button";
+import GlassPanel from "../../components/GlassPanel";
+import PageShell from "../../components/PageShell";
+import StatusBadge from "../../components/StatusBadge";
 
 interface MultiplayerLobbyProps {
   isHost: boolean;
@@ -174,7 +174,6 @@ export default function MultiplayerLobby({
           <Button
             onClick={() => onReady(!localPlayer.isReady)}
             variant={localPlayer.isReady ? "secondary" : "primary"}
-            tone="question"
             size="lg"
             fullWidth
             isSelected={localPlayer.isReady}
@@ -191,7 +190,6 @@ export default function MultiplayerLobby({
               id="start-game"
               onClick={onStartGame}
               disabled={!canStartGame}
-              tone="question"
               size="lg"
               fullWidth
               disabledReason={!canStartGame ? startDisabledReason : undefined}

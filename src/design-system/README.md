@@ -14,7 +14,8 @@
 
 ## Tokens
 
-- `themeByTone`: 브랜드와 5개 게임별 배경, accent gradient, focus ring, soft surface를 정의합니다.
+- `theme`: 앱 전체가 공유하는 단일 배경/accent/focus ring/soft surface 값을 정의합니다.
+- `levelMeta`: 질문 레벨(1~3)별 라벨/이모지/포인트 컬러를 정의합니다.
 - `surface`: glass panel, subtle panel, dark chip 같은 반복 surface를 정의합니다.
 - `radius`: control, panel, feature, pill 반경을 분리합니다.
 - `motion`: hover/active 동작을 표준화하고 reduced motion 환경을 고려합니다.
