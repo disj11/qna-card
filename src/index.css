@@ -1,3 +1,4 @@
+@import "pretendard/dist/web/variable/pretendardvariable.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,10 +25,12 @@ body {
   padding: 0;
   min-height: 100vh;
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #2b222d;
   color: #333;
   overflow-x: hidden;
 }
@@ -75,76 +78,80 @@ body {
   }
 }
 
-/* Card flip animation - Fixed version */
-.card-container {
-  perspective: 1000px;
+/* Quiet paper card — fade/scale reveal (no 3D flip, no saturated color swap) */
+.qcard {
+  position: relative;
   cursor: pointer;
 }
 
-.card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.card-container.flipped .card-inner {
-  transform: rotateY(180deg);
-}
-
-.card-face {
+.qcard-face {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  border-radius: 1rem;
+  inset: 0;
+  border-radius: 1.25rem;
+  background: #cbb794;
+  color: #211a17;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 24px -14px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1.5rem;
+  padding: 1.75rem;
+  text-align: center;
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
 }
 
-/* Daily cards - warm orange/yellow theme */
-.card-front-daily {
-  background: linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #ea580c 100%);
-  color: white;
+.qcard-face--back {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
 }
 
-.card-back-daily {
-  background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
-  color: white;
-  transform: rotateY(180deg);
+.qcard.revealed .qcard-face--front {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
 }
 
-/* Love cards - romantic pink/purple theme */
-.card-front-love {
-  background: linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%);
-  color: white;
+.qcard.revealed .qcard-face--back {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
 }
 
-.card-back-love {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
-  color: white;
-  transform: rotateY(180deg);
-}
-
-/* Hover effects - only apply scale on non-touch devices */
+/* Hover/press feedback - only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
-  .card-container:hover {
-    transform: scale(1.02);
+  .qcard:hover {
+    transform: translateY(-2px);
     transition: transform 0.2s ease;
   }
 }
 
-.card-container:active {
+.qcard:active {
   transform: scale(0.98);
   transition: transform 0.1s ease;
 }
 
-/* Animation delays for staggered entrance */
+@media (max-width: 768px) {
+  .qcard {
+    -webkit-tap-highlight-color: transparent;
+    tap-highlight-color: transparent;
+  }
+
+  .qcard:hover {
+    transform: none;
+  }
+
+  .qcard:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Staggered entrance animation */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -162,88 +169,48 @@ body {
   opacity: 0;
 }
 
-/* Floating animation for background elements */
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-
-/* Touch device optimizations */
-@media (max-width: 768px) {
-  .card-container {
-    -webkit-tap-highlight-color: transparent;
-    tap-highlight-color: transparent;
-  }
-
-  .card-container:hover {
-    transform: none;
-  }
-
-  .card-container:active {
-    transform: scale(0.98);
-  }
-}
-
-/* Ensure text is readable and properly positioned */
 .card-question-text {
-  text-align: center;
-  line-height: 1.4;
-  font-weight: 500;
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-number-badge {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(4px);
-  border-radius: 9999px;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.875rem;
+  line-height: 1.5;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .question-mark {
-  font-size: 4rem;
+  font-size: 3.5rem;
   font-weight: 700;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  margin-bottom: 1rem;
+  color: rgba(43, 35, 32, 0.3);
+  margin-bottom: 0.5rem;
 }
 
 @media (max-width: 640px) {
   .question-mark {
-    font-size: 3rem;
+    font-size: 2.75rem;
   }
 
-  .card-face {
-    padding: 1rem;
+  .qcard-face {
+    padding: 1.25rem;
   }
 
   .card-question-text {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
+}
+
+/* Emoji reaction float-up */
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-120px);
+  }
+}
+
+.animate-float-up {
+  animation: floatUp 3s ease-out forwards;
 }
 
 /* Toast animations */
@@ -282,7 +249,7 @@ body {
 /* Accessibility improvements */
 /* Focus styles for keyboard navigation */
 *:focus-visible {
-  outline: 2px solid #a78bfa;
+  outline: 2px solid #d9695a;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -290,7 +257,7 @@ body {
 button:focus-visible,
 a:focus-visible,
 [role="button"]:focus-visible {
-  outline: 3px solid #a78bfa;
+  outline: 3px solid #d9695a;
   outline-offset: 3px;
 }
 
@@ -299,7 +266,7 @@ a:focus-visible,
   position: absolute;
   top: -40px;
   left: 0;
-  background: #6366f1;
+  background: #d9695a;
   color: white;
   padding: 8px;
   text-decoration: none;

@@ -48,7 +48,7 @@ export default function ChatBox({
         <button
           onClick={onToggleMinimize}
           aria-label="채팅 열기"
-          className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 active:scale-95 relative"
+          className="bg-[#D9695A] hover:bg-[#C15848] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 active:scale-95 relative"
         >
           <svg
             className="w-6 h-6"
@@ -77,7 +77,7 @@ export default function ChatBox({
     <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 left-4 sm:left-auto z-50 sm:w-96">
       <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 flex items-center justify-between">
+        <div className="bg-[#D9695A] p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <svg
               className="w-5 h-5 text-white"
@@ -136,7 +136,7 @@ export default function ChatBox({
                 ) : (
                   <div className="bg-white/10 rounded-lg p-3">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-yellow-400 font-semibold text-sm">
+                      <span className="text-[#D9695A] font-semibold text-sm">
                         {msg.nickname}
                       </span>
                       <span className="text-white/40 text-xs">
@@ -196,14 +196,14 @@ export default function ChatBox({
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder="메시지를 입력하세요..."
-              className="flex-1 bg-white/10 text-white placeholder-white/50 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className="flex-1 bg-white/10 text-white placeholder-white/50 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D9695A]/60"
               maxLength={200}
             />
             <button
               type="submit"
               disabled={!inputMessage.trim()}
               aria-label="메시지 보내기"
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="bg-[#D9695A] hover:bg-[#C15848] text-white px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               <svg
                 className="w-5 h-5"

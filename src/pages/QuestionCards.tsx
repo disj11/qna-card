@@ -1,22 +1,22 @@
 import { useState } from "react";
-import { dailyQuestions, loveQuestions } from "../data/questionCards";
-import type { Question } from "../types";
+import {
+  level1Questions,
+  level2Questions,
+  level3Questions,
+} from "../data/questionCards";
+import { levelMeta } from "../design-system/tokens";
+import PageShell from "../components/common/PageShell";
+import type { Question, QuestionLevel } from "../types";
 
 interface CardProps {
   question: Question;
   isFlipped: boolean;
   onFlip: (id: number) => void;
   adminMode: boolean;
-  cardType: "daily" | "love";
+  level: QuestionLevel;
 }
 
-const Card = ({
-  question,
-  isFlipped,
-  onFlip,
-  adminMode,
-  cardType,
-}: CardProps) => {
+const Card = ({ question, isFlipped, onFlip, adminMode, level }: CardProps) => {
   const shouldShowBack = adminMode || isFlipped;
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(
     null
@@ -55,7 +55,7 @@ const Card = ({
 
   return (
     <div
-      className={`card-container h-48 sm:h-52 md:h-56 ${shouldShowBack ? "flipped" : ""}`}
+      className={`qcard h-64 sm:h-72 ${shouldShowBack ? "revealed" : ""}`}
       onClick={handleClick}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -68,26 +68,25 @@ const Card = ({
         }
       }}
     >
-      <div className="card-inner shadow-2xl">
-        {/* Card Front */}
-        <div
-          className={`card-face ${cardType === "daily" ? "card-front-daily" : "card-front-love"}`}
-        >
-          <div className="question-mark">?</div>
-          <div className="card-number-badge">
-            <span>#{question.id}</span>
-          </div>
-        </div>
+      <div
+        className="qcard-face qcard-face--front"
+        style={{ borderTop: `4px solid ${levelMeta[level].color}` }}
+      >
+        <div className="question-mark">?</div>
+      </div>
 
-        {/* Card Back */}
-        <div
-          className={`card-face ${cardType === "daily" ? "card-back-daily" : "card-back-love"}`}
-        >
-          <div className="card-question-text">{question.text}</div>
-          <div className="card-number-badge">
-            <span>#{question.id}</span>
-          </div>
+      <div
+        className="qcard-face qcard-face--back"
+        style={{ borderTop: `4px solid ${levelMeta[level].color}` }}
+      >
+        <div className="card-question-text text-sm sm:text-base">
+          {question.text}
         </div>
+        {question.followUp && (
+          <p className="mt-2 text-center text-xs sm:text-sm text-[#211A17]/60 italic">
+            💬 {question.followUp}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -121,130 +120,108 @@ export default function QuestionCards({ onBack }: QuestionCardsProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-4 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-20 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
-      </div>
-
-      <div className="relative z-10">
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-black/20 backdrop-blur-md border-b border-white/10">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-between mb-2">
-              <button
-                onClick={onBack}
-                className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors group"
+    <PageShell tone="question">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-[#2B222D]/90 backdrop-blur-md border-b border-white/10">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between mb-2">
+            <button
+              onClick={onBack}
+              className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors group"
+            >
+              <svg
+                className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                <span className="font-medium">메뉴로 돌아가기</span>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              <span className="font-medium">메뉴로 돌아가기</span>
+            </button>
+          </div>
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+              💝 혼자 미리보기
+            </h1>
+            <p className="text-white/50 text-sm">
+              애프터 전, 어떤 질문이 나올지 미리 훑어보세요
+            </p>
+
+            {/* Show All Toggle */}
+            <div className="flex items-center justify-center space-x-2">
+              <span className="text-white/70 text-sm font-medium">
+                모든 질문 보기
+              </span>
+              <button
+                onClick={toggleAdminMode}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#D9695A]/60 focus:ring-offset-2 focus:ring-offset-[#2B222D] ${
+                  adminMode ? "bg-[#D9695A]" : "bg-white/20"
+                }`}
+              >
+                <span
+                  className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform shadow-lg ${
+                    adminMode ? "translate-x-5" : "translate-x-1"
+                  }`}
+                />
               </button>
             </div>
-            <div className="text-center space-y-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 drop-shadow-lg">
-                💝 질문카드
-              </h1>
-
-              {/* Show All Toggle */}
-              <div className="flex items-center justify-center space-x-2">
-                <span className="text-white/80 text-sm font-medium">
-                  모든 질문 보기
-                </span>
-                <button
-                  onClick={toggleAdminMode}
-                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                    adminMode ? "bg-purple-500" : "bg-white/20"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform shadow-lg ${
-                      adminMode ? "translate-x-5" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Main Content */}
-        <main className="container mx-auto px-4 py-4 relative z-20">
-          {/* Daily Questions Section */}
-          <section className="mb-8">
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-4">
+        {(
+          [
+            [1, level1Questions] as const,
+            [2, level2Questions] as const,
+            [3, level3Questions] as const,
+          ]
+        ).map(([level, questions], sectionIndex) => (
+          <section key={level} className={sectionIndex < 2 ? "mb-8" : undefined}>
             <div className="text-center mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 drop-shadow-lg">
-                🌱 일상편
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                {levelMeta[level].emoji} Level {level} · {levelMeta[level].label}
               </h2>
-              <div className="w-16 h-0.5 bg-gradient-to-r from-green-400 to-blue-400 mx-auto rounded-full"></div>
+              <div
+                className="w-16 h-0.5 mx-auto rounded-full"
+                style={{ backgroundColor: levelMeta[level].color }}
+              ></div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {dailyQuestions.map((question, index) => (
+              {questions.map((question, index) => (
                 <div
                   key={question.id}
                   className="animate-slide-up"
-                  style={{ animationDelay: `${index * 0.05}s` }}
+                  style={{
+                    animationDelay: `${(index + sectionIndex * questions.length) * 0.05}s`,
+                  }}
                 >
                   <Card
                     question={question}
                     isFlipped={flippedCards.has(question.id)}
                     onFlip={handleCardFlip}
                     adminMode={adminMode}
-                    cardType="daily"
+                    level={level}
                   />
                 </div>
               ))}
             </div>
           </section>
+        ))}
+      </main>
 
-          {/* Love Questions Section */}
-          <section>
-            <div className="text-center mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 drop-shadow-lg">
-                💕 연애편
-              </h2>
-              <div className="w-16 h-0.5 bg-gradient-to-r from-pink-400 to-red-400 mx-auto rounded-full"></div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {loveQuestions.map((question, index) => (
-                <div
-                  key={question.id}
-                  className="animate-slide-up"
-                  style={{ animationDelay: `${(index + 30) * 0.05}s` }}
-                >
-                  <Card
-                    question={question}
-                    isFlipped={flippedCards.has(question.id)}
-                    onFlip={handleCardFlip}
-                    adminMode={adminMode}
-                    cardType="love"
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
-        </main>
-
-        {/* Footer */}
-        <footer className="text-center py-4">
-          <p className="text-white/60 text-sm">Made by [disj11] with ❤️</p>
-        </footer>
-      </div>
-    </div>
+      {/* Footer */}
+      <footer className="text-center py-4">
+        <p className="text-white/40 text-sm">Made by [disj11] with ❤️</p>
+      </footer>
+    </PageShell>
   );
 }

@@ -1,11 +1,11 @@
 {
-    "name": "아이스브레이킹 게임 모음",
-    "short_name": "아이스브레이킹",
-    "description": "친구들과 함께 즐기는 5가지 인터랙티브 게임",
+    "name": "질문카드 - 소개팅 애프터 대화 카드",
+    "short_name": "질문카드",
+    "description": "소개팅 애프터를 위한 3단계 대화 카드",
     "start_url": "/qna-card/",
     "display": "standalone",
-    "background_color": "#1e1b4b",
-    "theme_color": "#6366f1",
+    "background_color": "#2B222D",
+    "theme_color": "#2B222D",
     "orientation": "portrait-primary",
     "icons": [
         {
@@ -26,7 +26,7 @@
             "sizes": "512x512",
             "type": "image/svg+xml",
             "form_factor": "narrow",
-            "label": "아이스브레이킹 게임 앱 아이콘"
+            "label": "질문카드 앱 아이콘"
         }
     ],
     "lang": "ko-KR",

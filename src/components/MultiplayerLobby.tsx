@@ -63,7 +63,7 @@ export default function MultiplayerLobby({
             <p className="text-white/70 text-sm mb-2">방 코드</p>
             <div className="flex items-center justify-center gap-3">
               <div className="bg-black/30 px-6 py-3 rounded-xl">
-                <span className="text-3xl font-mono font-bold text-yellow-400 tracking-wider">
+                <span className="text-3xl font-mono font-bold text-[#D9695A] tracking-wider">
                   {roomId}
                 </span>
               </div>
@@ -174,7 +174,7 @@ export default function MultiplayerLobby({
           <Button
             onClick={() => onReady(!localPlayer.isReady)}
             variant={localPlayer.isReady ? "secondary" : "primary"}
-            tone="mission"
+            tone="question"
             size="lg"
             fullWidth
             isSelected={localPlayer.isReady}
@@ -191,7 +191,7 @@ export default function MultiplayerLobby({
               id="start-game"
               onClick={onStartGame}
               disabled={!canStartGame}
-              tone="balance"
+              tone="question"
               size="lg"
               fullWidth
               disabledReason={!canStartGame ? startDisabledReason : undefined}

@@ -3,27 +3,14 @@
  */
 
 /**
- * 게임 ID 타입
+ * 게임 ID 타입 (질문카드 단일 목적 앱)
  */
-export type GameId =
-  | "question-cards"
-  | "truth-or-dare"
-  | "random-mission"
-  | "balance-game"
-  | "word-chain";
+export type GameId = "question-cards";
 
 /**
- * 게임 정보 인터페이스
+ * 질문 레벨: 1 워밍업 · 2 연결 · 3 진심
  */
-export interface Game {
-  id: GameId;
-  title: string;
-  emoji: string;
-  description: string;
-  gradient: string;
-  textColor: string;
-  hasMultiplayer: boolean;
-}
+export type QuestionLevel = 1 | 2 | 3;
 
 /**
  * 질문 인터페이스
@@ -31,47 +18,8 @@ export interface Game {
 export interface Question {
   id: number;
   text: string;
-  category?: "daily" | "love";
-}
-
-/**
- * 미션 인터페이스
- */
-export interface Mission {
-  id: number;
-  text: string;
-  difficulty: "easy" | "medium" | "hard";
-  emoji?: string;
-}
-
-/**
- * 밸런스 게임 질문 인터페이스
- */
-export interface BalanceQuestion {
-  id: number;
-  optionA: string;
-  optionB: string;
-  emoji?: string;
-}
-
-/**
- * 초성 게임 퍼즐 인터페이스
- */
-export interface WordPuzzle {
-  id: number;
-  consonants: string;
-  answer: string;
-  category: string;
-  hint?: string;
-}
-
-/**
- * 진실/거짓 진술 인터페이스
- */
-export interface Statement {
-  id: number;
-  text: string;
-  isTrue: boolean;
+  level: QuestionLevel;
+  followUp?: string;
 }
 
 /**
@@ -97,11 +45,7 @@ export type GameMessageType =
   | "chat"
   | "emoji"
   | "turn-change"
-  | "player-list"
-  | "wordchain-submit"
-  | "randommission-draw"
-  | "randommission-complete"
-  | "randommission-pass";
+  | "player-list";
 
 /**
  * 게임 메시지 인터페이스
@@ -122,11 +66,6 @@ export interface GameStats {
   questionStats?: {
     totalFlipped: number;
     favoriteQuestions: number[];
-  };
-  missionStats?: {
-    completed: number;
-    passed: number;
-    completionRate: number;
   };
   playTime: {
     total: number;

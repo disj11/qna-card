@@ -6,16 +6,45 @@ import Button from "../components/common/Button";
 import GlassPanel from "../components/common/GlassPanel";
 import PageShell from "../components/common/PageShell";
 import SetupForm from "../components/common/SetupForm";
-import { dailyQuestions, loveQuestions } from "../data/questionCards";
+import { questionsByLevel, levelGateThreshold } from "../data/questionCards";
+import { levelMeta } from "../design-system/tokens";
+import type { QuestionLevel } from "../types";
 
 interface QuestionCardsMultiplayerProps {
   onBack: () => void;
 }
 
 interface GameState {
-  currentQuestionId: number | null;
-  flippedCards: number[];
-  currentCategory: "daily" | "love";
+  level: QuestionLevel;
+  queueIds: number[];
+  visited: Record<QuestionLevel, number[]>;
+  isRevealed: boolean;
+  finished: boolean;
+  pickResult: string | null;
+}
+
+const levels: QuestionLevel[] = [1, 2, 3];
+/** .qcard-face의 opacity/transform 트랜지션 시간(index.css)과 반드시 맞춰야 함 */
+const CARD_TRANSITION_MS = 350;
+
+function shuffle<T>(items: T[]): T[] {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function buildInitialState(): GameState {
+  return {
+    level: 1,
+    queueIds: shuffle(questionsByLevel[1].map((q) => q.id)),
+    visited: { 1: [], 2: [], 3: [] },
+    isRevealed: false,
+    finished: false,
+    pickResult: null,
+  };
 }
 
 export default function QuestionCardsMultiplayer({
@@ -29,9 +58,7 @@ export default function QuestionCardsMultiplayer({
   const [nickname, setNickname] = useState("");
   const [roomIdInput, setRoomIdInput] = useState("");
   const [isChatMinimized, setIsChatMinimized] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState<"daily" | "love">(
-    "daily"
-  );
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const gameState = multiplayer.gameState as GameState | null;
 
@@ -40,26 +67,6 @@ export default function QuestionCardsMultiplayer({
       setGameStarted(true);
     }
   }, [multiplayer.gameState]);
-
-  // Sync local category with shared game state
-  useEffect(() => {
-    if (
-      gameState?.currentCategory &&
-      gameState.currentCategory !== currentCategory
-    ) {
-      setCurrentCategory(gameState.currentCategory);
-    }
-  }, [gameState?.currentCategory, currentCategory]);
-
-  // Scroll to the focused card
-  useEffect(() => {
-    if (gameState?.currentQuestionId) {
-      const cardElement = document.getElementById(
-        `card-${gameState.currentQuestionId}`
-      );
-      cardElement?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }, [gameState?.currentQuestionId, currentCategory]);
 
   const handleCreateRoom = async () => {
     if (!nickname.trim()) {
@@ -91,53 +98,95 @@ export default function QuestionCardsMultiplayer({
   };
 
   const handleStartGame = () => {
-    const initialState: GameState = {
-      currentQuestionId: null,
-      flippedCards: [],
-      currentCategory: "daily",
-    };
-    multiplayer.startGame(initialState as unknown);
+    multiplayer.startGame(buildInitialState() as unknown);
     setGameStarted(true);
   };
 
-  const handleCardFlip = (questionId: number) => {
-    if (!multiplayer.isMyTurn() || !gameState) return;
-
-    // Prevent flipping if a card is already focused this turn
-    if (gameState.currentQuestionId !== null) {
+  const handleReveal = () => {
+    if (
+      !multiplayer.isMyTurn() ||
+      !gameState ||
+      gameState.isRevealed ||
+      isTransitioning
+    )
       return;
-    }
-
-    // Prevent flipping a card that is already in flippedCards
-    if (gameState.flippedCards.includes(questionId)) {
-      return;
-    }
-
-    const isDaily = dailyQuestions.some((q) => q.id === questionId);
-    const category = isDaily ? "daily" : "love";
-
-    const newState: GameState = {
-      ...gameState,
-      currentQuestionId: questionId,
-      flippedCards: [...gameState.flippedCards, questionId],
-      currentCategory: category,
-    };
-
-    multiplayer.updateGameState(newState);
+    multiplayer.updateGameState({ ...gameState, isRevealed: true });
   };
 
-  const handleNextTurn = () => {
+  const advance = (mark: boolean) => {
+    if (!multiplayer.isMyTurn() || !gameState || isTransitioning) return;
+    const currentId = gameState.queueIds[0];
+    if (currentId === undefined) return;
+
+    setIsTransitioning(true);
+    // 뒷면이 완전히 가려질 때까지(qcard-face 트랜지션 종료) 먼저 앞면으로 되돌린 뒤,
+    // 그 다음에 실제 카드 데이터를 바꿔서 양쪽 화면 모두 페이드 도중 다음 질문이 비치지 않게 한다.
+    multiplayer.updateGameState({ ...gameState, isRevealed: false, pickResult: null });
+
+    window.setTimeout(() => {
+      const visited = mark
+        ? {
+            ...gameState.visited,
+            [gameState.level]: [
+              ...gameState.visited[gameState.level],
+              currentId,
+            ],
+          }
+        : gameState.visited;
+
+      const remainingQueue = gameState.queueIds.slice(1);
+      const gateReached =
+        visited[gameState.level].length >= levelGateThreshold[gameState.level];
+      const levelExhausted = remainingQueue.length === 0;
+      const nextLevel: QuestionLevel | null =
+        gameState.level < 3 ? ((gameState.level + 1) as QuestionLevel) : null;
+
+      let newState: GameState;
+
+      if (nextLevel && (gateReached || levelExhausted)) {
+        newState = {
+          level: nextLevel,
+          queueIds: shuffle(
+            questionsByLevel[nextLevel]
+              .map((q) => q.id)
+              .filter((id) => !visited[nextLevel].includes(id))
+          ),
+          visited,
+          isRevealed: false,
+          finished: false,
+          pickResult: null,
+        };
+      } else if (levelExhausted && !nextLevel) {
+        newState = {
+          ...gameState,
+          queueIds: remainingQueue,
+          visited,
+          isRevealed: false,
+          finished: true,
+          pickResult: null,
+        };
+      } else {
+        newState = {
+          ...gameState,
+          queueIds: remainingQueue,
+          visited,
+          isRevealed: false,
+          pickResult: null,
+        };
+      }
+
+      multiplayer.updateGameState(newState);
+      multiplayer.changeTurn(multiplayer.getNextPlayer());
+      setIsTransitioning(false);
+    }, CARD_TRANSITION_MS);
+  };
+
+  const handlePickFirst = () => {
     if (!multiplayer.isMyTurn() || !gameState) return;
-
-    // Reset the focused card, but keep the flippedCards history
-    const newState: GameState = {
-      ...gameState,
-      currentQuestionId: null,
-    };
-    multiplayer.updateGameState(newState);
-
-    const nextPlayerId = multiplayer.getNextPlayer();
-    multiplayer.changeTurn(nextPlayerId);
+    const players = Array.from(multiplayer.players.values());
+    if (players.length === 0) return;
+    const picked = players[Math.floor(Math.random() * players.length)];
+    multiplayer.updateGameState({ ...gameState, pickResult: picked.nickname });
   };
 
   const handleLeave = () => {
@@ -151,11 +200,13 @@ export default function QuestionCardsMultiplayer({
       <PageShell centered>
         <GlassPanel size="lg" className="max-w-md w-full">
           <div className="text-center mb-8">
-            <div className="text-6xl mb-4">💝</div>
+            <div className="text-6xl mb-4">🌐</div>
             <h1 className="text-3xl font-bold text-white mb-2">
-              질문카드 멀티플레이어
+              원거리 함께하기
             </h1>
-            <p className="text-white/70">친구들과 함께 서로를 알아가보세요!</p>
+            <p className="text-white/70">
+              서로 다른 폰으로 방을 만들어 같은 질문을 나눠보세요
+            </p>
           </div>
 
           <div className="space-y-4">
@@ -237,22 +288,45 @@ export default function QuestionCardsMultiplayer({
     );
   }
 
-  // Game screen
-  const questions =
-    currentCategory === "daily" ? dailyQuestions : loveQuestions;
+  if (!gameState) {
+    return null;
+  }
+
   const currentTurnPlayer = Array.from(multiplayer.players.values()).find(
     (p) => p.id === multiplayer.currentTurn
   );
+  const totalAnswered = levels.reduce(
+    (sum, l) => sum + gameState.visited[l].length,
+    0
+  );
+  const currentId = gameState.queueIds[0];
+  const currentQuestion = currentId
+    ? questionsByLevel[gameState.level].find((q) => q.id === currentId)
+    : undefined;
 
+  // Finished screen
+  if (gameState.finished) {
+    return (
+      <PageShell tone="question" centered>
+        <GlassPanel size="lg" className="max-w-lg w-full text-center">
+          <div className="text-6xl mb-4">🎉</div>
+          <h1 className="text-3xl font-bold text-white mb-2 break-keep">
+            오늘 {totalAnswered}개의 질문을 나눴어요
+          </h1>
+          <p className="text-white/70 mb-6">
+            진심편까지 모두 나눴네요. 다음 만남도 기대돼요!
+          </p>
+          <Button onClick={handleLeave} size="lg" fullWidth>
+            나가기
+          </Button>
+        </GlassPanel>
+      </PageShell>
+    );
+  }
+
+  // Game screen
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-4 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-20 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
-      </div>
-
+    <PageShell tone="question">
       {/* Emoji Reactions Overlay */}
       <div className="fixed inset-0 pointer-events-none z-40">
         {multiplayer.emojiReactions.map((reaction, index) => (
@@ -270,206 +344,206 @@ export default function QuestionCardsMultiplayer({
         ))}
       </div>
 
-      <div className="relative z-10">
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-black/20 backdrop-blur-md border-b border-white/10">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-between mb-2">
-              <button
-                onClick={handleLeave}
-                className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors group"
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-[#2B222D]/90 backdrop-blur-md border-b border-white/10">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between mb-2">
+            <button
+              onClick={handleLeave}
+              className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors group"
+            >
+              <svg
+                className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                <span className="font-medium">나가기</span>
-              </button>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              <span className="font-medium">나가기</span>
+            </button>
 
-              <div className="flex items-center gap-2">
-                <span className="text-white/60 text-sm">방:</span>
-                <span className="text-yellow-400 font-mono font-bold">
-                  {multiplayer.roomId}
+            <div className="flex items-center gap-2">
+              <span className="text-white/50 text-sm">방:</span>
+              <span className="text-[#D9695A] font-mono font-bold">
+                {multiplayer.roomId}
+              </span>
+            </div>
+          </div>
+
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+              💝 질문카드 (원거리 함께하기)
+            </h1>
+
+            {/* Current Turn Indicator */}
+            <div className="flex items-center justify-center gap-2">
+              <div
+                className={`px-4 py-2 rounded-full border ${
+                  multiplayer.isMyTurn()
+                    ? "bg-green-500/15 border-green-400/40"
+                    : "bg-white/[0.04] border-white/10"
+                }`}
+              >
+                <span className="text-white font-semibold">
+                  {multiplayer.isMyTurn()
+                    ? "🎯 내가 카드를 넘길 차례!"
+                    : `${currentTurnPlayer?.nickname || ""}님이 카드를 넘길 차례`}
                 </span>
               </div>
             </div>
-
-            <div className="text-center space-y-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 drop-shadow-lg">
-                💝 질문카드 (멀티플레이어)
-              </h1>
-
-              {/* Current Turn Indicator */}
-              <div className="flex items-center justify-center gap-2">
-                <div
-                  className={`px-4 py-2 rounded-full ${
-                    multiplayer.isMyTurn()
-                      ? "bg-green-500/30 border-2 border-green-400"
-                      : "bg-white/10"
-                  }`}
-                >
-                  <span className="text-white font-semibold">
-                    {multiplayer.isMyTurn()
-                      ? "🎯 내 차례!"
-                      : `${currentTurnPlayer?.nickname || ""}님의 차례`}
-                  </span>
-                </div>
-              </div>
-
-              {/* Next Turn Button */}
-              {multiplayer.isMyTurn() && gameState?.currentQuestionId && (
-                <button
-                  onClick={handleNextTurn}
-                  className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all transform hover:scale-105 active:scale-95"
-                >
-                  다음 사람 차례 넘기기 →
-                </button>
-              )}
-            </div>
-          </div>
-        </header>
-
-        {/* Category Tabs */}
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-center gap-4 mb-6">
-            <button
-              onClick={() => setCurrentCategory("daily")}
-              className={`px-6 py-3 rounded-2xl font-bold transition-all transform hover:scale-105 active:scale-95 ${
-                currentCategory === "daily"
-                  ? "bg-gradient-to-r from-green-400 to-blue-400 text-white shadow-lg"
-                  : "bg-white/10 text-white/70 hover:bg-white/20"
-              }`}
-            >
-              🌱 일상편
-            </button>
-            <button
-              onClick={() => setCurrentCategory("love")}
-              className={`px-6 py-3 rounded-2xl font-bold transition-all transform hover:scale-105 active:scale-95 ${
-                currentCategory === "love"
-                  ? "bg-gradient-to-r from-pink-400 to-red-400 text-white shadow-lg"
-                  : "bg-white/10 text-white/70 hover:bg-white/20"
-              }`}
-            >
-              💕 연애편
-            </button>
-          </div>
-
-          {/* Question Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-8">
-            {questions.map((question) => {
-              const isFlipped = gameState?.flippedCards.includes(question.id);
-              const isCurrentCard =
-                gameState?.currentQuestionId === question.id;
-
-              return (
-                <button
-                  key={question.id}
-                  id={`card-${question.id}`}
-                  onClick={() => handleCardFlip(question.id)}
-                  disabled={!multiplayer.isMyTurn() || isFlipped}
-                  className={`relative group ${
-                    !multiplayer.isMyTurn() || isFlipped
-                      ? "cursor-not-allowed"
-                      : ""
-                  }`}
-                >
-                  <div
-                    className={`aspect-[3/4] rounded-2xl shadow-2xl transition-all duration-500 transform ${
-                      isCurrentCard ? "ring-4 ring-yellow-400 scale-105" : ""
-                    } ${
-                      multiplayer.isMyTurn()
-                        ? "hover:scale-105 active:scale-95"
-                        : ""
-                    }`}
-                    style={{
-                      transformStyle: "preserve-3d",
-                      transform: isFlipped
-                        ? "rotateY(180deg)"
-                        : "rotateY(0deg)",
-                    }}
-                  >
-                    {/* Front */}
-                    <div
-                      className={`absolute inset-0 rounded-2xl flex items-center justify-center ${
-                        currentCategory === "daily"
-                          ? "bg-gradient-to-br from-green-400 to-blue-500"
-                          : "bg-gradient-to-br from-pink-400 to-red-500"
-                      }`}
-                      style={{
-                        backfaceVisibility: "hidden",
-                      }}
-                    >
-                      <div className="text-6xl sm:text-7xl">?</div>
-                      <div className="absolute top-2 right-2 bg-black/30 px-2 py-1 rounded-lg">
-                        <span className="text-white text-xs font-bold">
-                          #{question.id}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Back */}
-                    <div
-                      className={`absolute inset-0 rounded-2xl p-4 flex items-center justify-center text-center ${
-                        currentCategory === "daily"
-                          ? "bg-gradient-to-br from-blue-500 to-green-400"
-                          : "bg-gradient-to-br from-red-500 to-pink-400"
-                      }`}
-                      style={{
-                        backfaceVisibility: "hidden",
-                        transform: "rotateY(180deg)",
-                      }}
-                    >
-                      <p className="text-white text-sm sm:text-base font-medium leading-relaxed">
-                        {question.text}
-                      </p>
-                      <div className="absolute top-2 right-2 bg-black/30 px-2 py-1 rounded-lg">
-                        <span className="text-white text-xs font-bold">
-                          #{question.id}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
           </div>
         </div>
+      </header>
 
-        {/* Players Info */}
-        <div className="fixed bottom-4 left-4 z-30 bg-black/30 backdrop-blur-md rounded-2xl p-4 max-w-xs">
-          <h3 className="text-white font-bold mb-2 flex items-center gap-2">
-            <span>👥</span>
-            <span>참가자 ({multiplayer.players.size})</span>
-          </h3>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
-            {Array.from(multiplayer.players.values()).map((player) => (
-              <div
-                key={player.id}
-                className={`flex items-center gap-2 text-sm ${
-                  player.id === multiplayer.currentTurn
-                    ? "text-yellow-400 font-bold"
-                    : "text-white/70"
-                }`}
-              >
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    player.status === "online" ? "bg-green-400" : "bg-gray-400"
-                  }`}
-                ></div>
-                <span>{player.nickname}</span>
-                {player.isHost && <span>👑</span>}
+      <div className="container mx-auto px-4 py-4 max-w-2xl">
+        {/* Level tabs (read-only indicator) */}
+        <div className="flex justify-center gap-2 my-4">
+          {levels.map((l) => (
+            <div
+              key={l}
+              className={`px-4 py-2 rounded-2xl font-bold text-sm border ${
+                l === gameState.level
+                  ? "bg-white/10 text-white"
+                  : "bg-white/[0.04] text-white/40 border-white/10"
+              }`}
+              style={
+                l === gameState.level
+                  ? { borderColor: levelMeta[l].color }
+                  : undefined
+              }
+            >
+              {levelMeta[l].emoji} {levelMeta[l].label}
+            </div>
+          ))}
+        </div>
+
+        <p className="text-center text-white/60 text-sm mb-4">
+          Level {gameState.level} ·{" "}
+          {gameState.visited[gameState.level].length}/
+          {levelGateThreshold[gameState.level]} · 총 {totalAnswered}개 진행
+        </p>
+
+        {currentQuestion ? (
+          <>
+            {gameState.pickResult && (
+              <div className="text-center mb-4 animate-slide-up">
+                <span className="inline-block bg-[#CBB794] text-[#211A17] font-bold px-4 py-2 rounded-full shadow-lg">
+                  🎲 이번엔 {gameState.pickResult}님 먼저!
+                </span>
               </div>
-            ))}
-          </div>
+            )}
+
+            <div
+              className={`qcard h-64 sm:h-72 mx-auto max-w-md ${
+                gameState.isRevealed ? "revealed" : ""
+              }`}
+              onClick={handleReveal}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleReveal();
+                }
+              }}
+            >
+              <div
+                className="qcard-face qcard-face--front"
+                style={{ borderTop: `4px solid ${levelMeta[gameState.level].color}` }}
+              >
+                <div className="question-mark">?</div>
+                <p className="text-sm text-[#211A17]/50">눌러서 확인하기</p>
+              </div>
+              <div
+                className="qcard-face qcard-face--back"
+                style={{ borderTop: `4px solid ${levelMeta[gameState.level].color}` }}
+              >
+                <div className="card-question-text text-lg sm:text-xl">
+                  {currentQuestion.text}
+                </div>
+                {currentQuestion.followUp && (
+                  <p className="mt-3 text-center text-sm text-[#211A17]/60 italic">
+                    💬 {currentQuestion.followUp}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-center gap-3 mt-6">
+              <Button
+                onClick={handlePickFirst}
+                variant="secondary"
+                disabled={!multiplayer.isMyTurn() || isTransitioning}
+              >
+                🎲 먼저 답할 사람
+              </Button>
+            </div>
+
+            <div className="flex justify-center gap-4 mt-4">
+              <Button
+                onClick={() => advance(false)}
+                variant="ghost"
+                size="lg"
+                disabled={!multiplayer.isMyTurn() || isTransitioning}
+              >
+                패스
+              </Button>
+              <Button
+                onClick={() => advance(true)}
+                size="lg"
+                disabled={
+                  !multiplayer.isMyTurn() ||
+                  !gameState.isRevealed ||
+                  isTransitioning
+                }
+                disabledReason={
+                  !multiplayer.isMyTurn()
+                    ? undefined
+                    : "카드를 눌러 질문을 먼저 확인해주세요"
+                }
+              >
+                다음 카드 →
+              </Button>
+            </div>
+          </>
+        ) : (
+          <p className="text-center text-white/60">
+            이 레벨의 질문을 모두 살펴봤어요.
+          </p>
+        )}
+      </div>
+
+      {/* Players Info */}
+      <div className="fixed bottom-4 left-4 z-30 bg-black/30 backdrop-blur-md rounded-2xl p-4 max-w-xs">
+        <h3 className="text-white font-bold mb-2 flex items-center gap-2">
+          <span>👥</span>
+          <span>참가자 ({multiplayer.players.size})</span>
+        </h3>
+        <div className="space-y-2 max-h-40 overflow-y-auto">
+          {Array.from(multiplayer.players.values()).map((player) => (
+            <div
+              key={player.id}
+              className={`flex items-center gap-2 text-sm ${
+                player.id === multiplayer.currentTurn
+                  ? "text-[#D9695A] font-bold"
+                  : "text-white/70"
+              }`}
+            >
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  player.status === "online" ? "bg-green-400" : "bg-gray-400"
+                }`}
+              ></div>
+              <span>{player.nickname}</span>
+              {player.isHost && <span>👑</span>}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -481,6 +555,6 @@ export default function QuestionCardsMultiplayer({
         isMinimized={isChatMinimized}
         onToggleMinimize={() => setIsChatMinimized(!isChatMinimized)}
       />
-    </div>
+    </PageShell>
   );
 }

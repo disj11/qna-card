@@ -15,10 +15,16 @@ describe("App routing", () => {
     renderApp("/qna-card/");
 
     expect(
-      screen.getByRole("heading", { name: /아이스브레이킹 게임/i })
+      screen.getByRole("heading", { name: /질문카드/i })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /질문카드 선택/i })
+      screen.getByRole("button", { name: /한 기기로 함께 시작/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /혼자 미리보기 시작/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /원거리 함께하기 시작/i })
     ).toBeInTheDocument();
   });
 
@@ -30,14 +36,6 @@ describe("App routing", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /메인 메뉴로 돌아가기/i })
-    ).toBeInTheDocument();
-  });
-
-  it("shows a friendly not found screen for unknown game ids", () => {
-    renderApp("/qna-card/game/not-real");
-
-    expect(
-      screen.getByRole("heading", { name: /잘못된 게임 주소입니다/i })
     ).toBeInTheDocument();
   });
 });

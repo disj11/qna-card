@@ -45,12 +45,11 @@ export default function Button({
   const baseStyles = `inline-flex items-center justify-center font-medium rounded-xl ${motion.interactive} ${focusRing} ${theme.focusRing} disabled:opacity-50 disabled:cursor-not-allowed`;
 
   const variantStyles = {
-    primary: `bg-gradient-to-r ${theme.accentGradient} text-white hover:shadow-lg`,
+    primary: `${theme.accent} ${theme.accentText} hover:shadow-lg hover:shadow-black/30`,
     secondary:
-      "bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm border border-white/20",
-    danger:
-      "bg-gradient-to-r from-red-500 to-orange-500 text-white hover:shadow-lg",
-    ghost: "text-white/80 hover:text-white hover:bg-white/10",
+      "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/10",
+    danger: "bg-red-500/90 text-white hover:bg-red-500",
+    ghost: "text-white/70 hover:text-white hover:bg-white/[0.06]",
   };
 
   const sizeStyles = {

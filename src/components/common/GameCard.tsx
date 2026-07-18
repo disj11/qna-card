@@ -5,7 +5,8 @@ interface GameCardProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: ReactNode;
   title: string;
   description: string;
-  gradient?: string;
+  /** 아이콘 배지와 좌측 포인트 라인에 쓰이는 은은한 포인트 컬러 */
+  accent?: string;
   meta?: ReactNode;
   isSelected?: boolean;
 }
@@ -14,7 +15,7 @@ export default function GameCard({
   icon,
   title,
   description,
-  gradient = "from-purple-500 to-pink-500",
+  accent = "#D9695A",
   meta,
   isSelected = false,
   className = "",
@@ -24,25 +25,27 @@ export default function GameCard({
     <button
       type="button"
       aria-pressed={isSelected}
-      className={`group relative text-left ${focusRing} focus-visible:ring-purple-300 ${className}`}
+      className={`group relative text-left h-full ${focusRing} focus-visible:ring-[#D9695A]/60 ${className}`}
       {...props}
     >
       <div
-        className={`relative overflow-hidden bg-gradient-to-br ${gradient} ${radius.panel} p-8 shadow-2xl ${motion.lift} ${
-          isSelected ? "ring-2 ring-white/80" : ""
+        className={`relative overflow-hidden h-full bg-white/[0.04] border border-white/10 ${radius.panel} p-8 ${motion.lift} hover:bg-white/[0.06] ${
+          isSelected ? "ring-2 ring-white/40" : ""
         }`}
+        style={{ borderLeft: `3px solid ${accent}` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div className="relative z-10 flex flex-col items-center text-center space-y-4">
-          <div className="text-6xl sm:text-7xl transform group-hover:scale-110 transition-transform duration-300 motion-reduce:transform-none">
+        <div className="relative z-10 flex flex-col items-center justify-center text-center space-y-4 h-full">
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
+            style={{ backgroundColor: `${accent}26` }}
+            aria-hidden="true"
+          >
             {icon}
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">{title}</h2>
-          <p className="text-sm sm:text-base text-white/80">{description}</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">{title}</h2>
+          <p className="text-sm sm:text-base text-white/60">{description}</p>
           {meta}
         </div>
-        <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-bl-full rounded-tr-2xl"></div>
-        <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/10 rounded-tr-full rounded-bl-2xl"></div>
       </div>
     </button>
   );

@@ -21,11 +21,7 @@ export interface GameMessage {
     | "chat"
     | "emoji"
     | "turn-change"
-    | "player-list"
-    | "wordchain-submit"
-    | "randommission-draw"
-    | "randommission-complete"
-    | "randommission-pass";
+    | "player-list";
   data: unknown;
   from: string;
   timestamp: number;

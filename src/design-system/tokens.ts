@@ -1,12 +1,16 @@
-import type { GameId } from "../types";
+import type { GameId, QuestionLevel } from "../types";
 
-export type DesignTone =
-  | "brand"
-  | "question"
-  | "truth"
-  | "mission"
-  | "balance"
-  | "word";
+export type DesignTone = "brand" | "question";
+
+/** 레벨별 은은한 포인트 컬러 — 카드 전체가 아닌 칩/테두리에만 사용 */
+export const levelMeta: Record<
+  QuestionLevel,
+  { label: string; emoji: string; color: string }
+> = {
+  1: { label: "워밍업", emoji: "🌱", color: "#8FA98C" },
+  2: { label: "연결", emoji: "💕", color: "#C98A8A" },
+  3: { label: "진심", emoji: "🔥", color: "#C99A4A" },
+};
 
 export type FeedbackTone = "info" | "success" | "warning" | "danger";
 
@@ -14,88 +18,46 @@ export interface GameTheme {
   tone: DesignTone;
   gameId?: GameId;
   background: string;
-  accentGradient: string;
+  accent: string;
   accentText: string;
   focusRing: string;
   softSurface: string;
   border: string;
 }
 
+/** 차분한 다크 톤 하나만 사용 — 짙은 자흑 배경 + 로즈 계열 단일 포인트 컬러 */
 export const themeByTone: Record<DesignTone, GameTheme> = {
   brand: {
     tone: "brand",
-    background: "from-indigo-900 via-purple-900 to-pink-900",
-    accentGradient: "from-purple-500 to-pink-500",
-    accentText: "text-purple-100",
-    focusRing: "focus-visible:ring-purple-300",
-    softSurface: "bg-purple-500/20",
-    border: "border-purple-300/30",
+    background: "bg-[#2B222D]",
+    accent: "bg-[#D9695A] hover:bg-[#C15848]",
+    accentText: "text-[#FBF1E7]",
+    focusRing: "focus-visible:ring-[#D9695A]/60",
+    softSurface: "bg-white/[0.04]",
+    border: "border-white/10",
   },
   question: {
     tone: "question",
     gameId: "question-cards",
-    background: "from-indigo-900 via-purple-900 to-pink-900",
-    accentGradient: "from-purple-500 to-pink-500",
-    accentText: "text-purple-100",
-    focusRing: "focus-visible:ring-purple-300",
-    softSurface: "bg-purple-500/20",
-    border: "border-purple-300/30",
-  },
-  truth: {
-    tone: "truth",
-    gameId: "truth-or-dare",
-    background: "from-blue-900 via-cyan-900 to-teal-900",
-    accentGradient: "from-blue-500 to-cyan-500",
-    accentText: "text-blue-100",
-    focusRing: "focus-visible:ring-cyan-300",
-    softSurface: "bg-blue-500/20",
-    border: "border-blue-300/30",
-  },
-  mission: {
-    tone: "mission",
-    gameId: "random-mission",
-    background: "from-green-900 via-emerald-900 to-teal-900",
-    accentGradient: "from-green-500 to-emerald-500",
-    accentText: "text-green-100",
-    focusRing: "focus-visible:ring-emerald-300",
-    softSurface: "bg-green-500/20",
-    border: "border-green-300/30",
-  },
-  balance: {
-    tone: "balance",
-    gameId: "balance-game",
-    background: "from-orange-900 via-red-900 to-pink-900",
-    accentGradient: "from-orange-500 to-red-500",
-    accentText: "text-orange-100",
-    focusRing: "focus-visible:ring-orange-300",
-    softSurface: "bg-orange-500/20",
-    border: "border-orange-300/30",
-  },
-  word: {
-    tone: "word",
-    gameId: "word-chain",
-    background: "from-indigo-900 via-purple-900 to-pink-900",
-    accentGradient: "from-indigo-500 to-purple-500",
-    accentText: "text-indigo-100",
-    focusRing: "focus-visible:ring-indigo-300",
-    softSurface: "bg-indigo-500/20",
-    border: "border-indigo-300/30",
+    background: "bg-[#2B222D]",
+    accent: "bg-[#D9695A] hover:bg-[#C15848]",
+    accentText: "text-[#FBF1E7]",
+    focusRing: "focus-visible:ring-[#D9695A]/60",
+    softSurface: "bg-white/[0.04]",
+    border: "border-white/10",
   },
 };
 
 export const gameToneById: Record<GameId, DesignTone> = {
   "question-cards": "question",
-  "truth-or-dare": "truth",
-  "random-mission": "mission",
-  "balance-game": "balance",
-  "word-chain": "word",
 };
 
 export const surface = {
-  glass:
-    "bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl text-white",
-  glassSubtle: "bg-white/10 border border-white/10 text-white",
-  dark: "bg-black/30 text-white",
+  glass: "bg-white/[0.05] backdrop-blur-sm border border-white/10 shadow-xl text-white",
+  glassSubtle: "bg-white/[0.03] border border-white/10 text-white",
+  dark: "bg-black/20 text-white",
+  /** 질문 카드 전용 종이 질감 표면 */
+  paper: "bg-[#CBB794] text-[#211A17]",
 };
 
 export const radius = {
@@ -107,16 +69,16 @@ export const radius = {
 
 export const motion = {
   interactive:
-    "transition-all duration-200 active:scale-95 motion-reduce:transition-none motion-reduce:transform-none",
-  lift: "transition-all duration-300 hover:scale-[1.02] active:scale-95 motion-reduce:transition-none motion-reduce:transform-none",
+    "transition-all duration-200 active:scale-[0.98] motion-reduce:transition-none motion-reduce:transform-none",
+  lift: "transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] motion-reduce:transition-none motion-reduce:transform-none",
 };
 
 export const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#2B222D]";
 
 export const feedbackToneStyles: Record<FeedbackTone, string> = {
-  info: "bg-blue-500/20 border-blue-300/30 text-blue-100",
-  success: "bg-green-500/20 border-green-300/30 text-green-100",
-  warning: "bg-yellow-500/20 border-yellow-300/30 text-yellow-100",
-  danger: "bg-red-500/20 border-red-300/30 text-red-100",
+  info: "bg-blue-500/15 border-blue-300/25 text-blue-100",
+  success: "bg-green-500/15 border-green-300/25 text-green-100",
+  warning: "bg-yellow-500/15 border-yellow-300/25 text-yellow-100",
+  danger: "bg-red-500/15 border-red-300/25 text-red-100",
 };

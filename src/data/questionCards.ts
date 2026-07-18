@@ -1,255 +1,409 @@
 import type { Question } from "../types";
 
-export const dailyQuestions: Question[] = [
+/**
+ * Level 1 · 워밍업
+ * 부담 없이 답할 수 있는 열린 질문. 애프터 초반 어색함을 풀기 위한 단계.
+ */
+export const level1Questions: Question[] = [
   {
     id: 1,
     text: "아침에 일어나 가장 먼저 하는 일은 무엇인가요?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 2,
     text: "하루 중 가장 좋아하는 시간은 언제인가요? 그 이유는?",
-    category: "daily",
+    level: 1,
   },
-  { id: 3, text: "요즘 가장 자주 듣는 노래가 있나요?", category: "daily" },
-  { id: 4, text: "나만 알고 싶은 동네 맛집이 있다면?", category: "daily" },
-  { id: 5, text: "스트레스받을 때 주로 어떻게 푸나요?", category: "daily" },
+  {
+    id: 3,
+    text: "요즘 가장 자주 듣는 노래가 있나요?",
+    level: 1,
+    followUp: "그 노래, 지금 같이 한번 들어볼까요?",
+  },
+  { id: 4, text: "나만 알고 싶은 동네 맛집이 있다면?", level: 1 },
+  {
+    id: 5,
+    text: "스트레스받을 때 주로 어떻게 푸나요?",
+    level: 1,
+  },
   {
     id: 6,
     text: "최근에 가장 재미있게 본 영화나 드라마는 무엇인가요?",
-    category: "daily",
+    level: 1,
+    followUp: "그럼 다음엔 같이 볼래요?",
   },
-  { id: 7, text: "잠들기 전 꼭 하는 나만의 습관이 있나요?", category: "daily" },
+  { id: 7, text: "잠들기 전 꼭 하는 나만의 습관이 있나요?", level: 1 },
   {
     id: 8,
-    text: "핸드폰으로 가장 많이 사용하는 앱은 무엇인가요?",
-    category: "daily",
+    text: "낯을 가리는 편이에요, 아니면 금방 편해지는 편이에요?",
+    level: 1,
+    followUp: "저는 어떤 것 같아요?",
   },
   {
     id: 9,
     text: '"소울 푸드"라고 부를 만한 음식이 있나요?',
-    category: "daily",
+    level: 1,
+    followUp: "다음에 그거 같이 먹으러 갈까요?",
   },
   {
     id: 10,
     text: "학창 시절 가장 좋아했던 과목은 무엇이었나요?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 11,
-    text: "단 하루, 다른 사람으로 살 수 있다면 누가 되고 싶나요?",
-    category: "daily",
+    text: "지금까지 살아본 동네 중에 가장 애정이 가는 곳이 있어요?",
+    level: 1,
+    followUp: "그 동네, 왜 그렇게 좋았어요?",
   },
-  { id: 12, text: "어릴 적 꿈은 무엇이었나요?", category: "daily" },
+  { id: 12, text: "어릴 적 꿈은 무엇이었나요?", level: 1 },
   {
     id: 13,
     text: "최근에 가장 크게 웃었던 기억은 무엇인가요?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 14,
-    text: "나를 동물에 비유한다면 어떤 동물일 것 같나요?",
-    category: "daily",
+    text: "어떤 이야기를 할 때 나도 모르게 말이 많아지는 편이에요?",
+    level: 1,
+    followUp: "오, 그거 지금 좀 더 들어볼 수 있어요?",
   },
-  { id: 15, text: "여행 갈 때 꼭 챙기는 물건이 있나요?", category: "daily" },
+  { id: 15, text: "여행 갈 때 꼭 챙기는 물건이 있나요?", level: 1 },
   {
     id: 16,
     text: "갑자기 하루의 휴가가 주어진다면 무엇을 하고 싶나요?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 17,
-    text: "초능력을 가질 수 있다면, 어떤 능력을 원하나요?",
-    category: "daily",
+    text: "요즘 꾸준히 하고 있는 루틴이나 습관이 있나요? (운동, 독서 등)",
+    level: 1,
   },
   {
     id: 18,
     text: "가장 좋아하는 계절과 그 이유는 무엇인가요?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 19,
     text: "내일 지구가 멸망한다면 오늘 무엇을 먹을 건가요?",
-    category: "daily",
+    level: 1,
   },
-  { id: 20, text: "가장 기억에 남는 여행지는 어디인가요?", category: "daily" },
-  { id: 21, text: "아침형 인간인가요, 저녁형 인간인가요?", category: "daily" },
+  {
+    id: 20,
+    text: "가장 기억에 남는 여행지는 어디인가요?",
+    level: 1,
+    followUp: "그곳, 다시 간다면 누구랑 가고 싶어요?",
+  },
+  {
+    id: 21,
+    text: "아침형 인간인가요, 저녁형 인간인가요?",
+    level: 1,
+  },
   {
     id: 22,
     text: "사소하지만 확실한 행복을 느끼는 순간은 언제인가요?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 23,
     text: "가장 좋아하는 음료나 카페 메뉴가 있나요?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 24,
     text: "요리하는 것을 좋아하나요? 자주 하는 요리가 있다면?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 25,
     text: "인생 책이나 인생 영화라고 할 만한 작품이 있나요?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 26,
     text: "집에서 가장 좋아하는 공간은 어디인가요?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 27,
     text: "어떤 향기를 가장 좋아하나요? (음식, 자연, 향수 등)",
-    category: "daily",
+    level: 1,
   },
   {
     id: 28,
     text: "지금까지 받아본 선물 중 가장 기억에 남는 것은 무엇인가요?",
-    category: "daily",
+    level: 1,
   },
   {
     id: 29,
     text: "주말에 주로 무엇을 하며 시간을 보내나요?",
-    category: "daily",
+    level: 1,
+    followUp: "그럼 이번 주말엔 뭐 할 거예요?",
   },
-  { id: 30, text: "10년 후의 나는 어떤 모습일 것 같나요?", category: "daily" },
+  {
+    id: 30,
+    text: "요즘 새로 빠져 있는 취미나 관심사가 있나요?",
+    level: 1,
+  },
 ];
 
-export const loveQuestions: Question[] = [
-  { id: 31, text: "저에 대한 첫인상은 어땠나요?", category: "love" },
+/**
+ * Level 2 · 연결
+ * 취향, 가치관, 연애관을 자연스럽게 나누는 단계. 결혼·재산·전 연애 같은
+ * 부담 주제는 배제하고 "지금 이 사람"에게 집중한 질문으로 구성.
+ */
+export const level2Questions: Question[] = [
+  { id: 31, text: "저에 대한 첫인상은 어땠나요?", level: 2 },
   {
     id: 32,
     text: "첫 만남에서 가장 기억에 남는 장면이 있다면?",
-    category: "love",
+    level: 2,
   },
   {
     id: 33,
     text: "사람을 볼 때 가장 먼저, 그리고 중요하게 보는 부분은 무엇인가요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 34,
     text: "연애할 때 가장 중요하다고 생각하는 가치 한 가지를 꼽는다면?",
-    category: "love",
+    level: 2,
   },
   {
     id: 35,
     text: "가장 이상적이라고 생각하는 데이트는 어떤 모습인가요?",
-    category: "love",
+    level: 2,
+    followUp: "그럼 그런 데이트, 저랑 해보고 싶은 거예요?",
   },
   {
     id: 36,
     text: "이성에게 '심쿵'하게 되는 순간은 언제인가요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 37,
     text: "즉흥적인 데이트와 계획적인 데이트 중 어떤 것을 더 선호하세요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 38,
     text: "'친구 같은 편안한 연애' vs '언제나 설레는 연애', 어느 쪽을 더 선호하나요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 39,
     text: "연락 문제(연락 빈도 등)에 대해 어떻게 생각하세요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 40,
     text: "연애가 삶에서 어느 정도의 우선순위를 차지하는 것 같나요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 41,
     text: "함께 여행 가고 싶은 곳이 있다면 어디인가요? (국내/해외)",
-    category: "love",
+    level: 2,
   },
   {
     id: 42,
-    text: "나를 색깔로 표현한다면 무슨 색일 것 같나요? 그 이유는?",
-    category: "love",
+    text: "데이트 장소는 조용한 카페 같은 곳과 활동적인 곳 중 어디를 더 선호하세요?",
+    level: 2,
+    followUp: "그럼 다음엔 그런 곳으로 가볼까요?",
   },
   {
     id: 43,
     text: "연애하면서 '이것만은 존중해줬으면 좋겠다!' 하는 것이 있나요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 44,
     text: "저에게 궁금했지만, 아직 물어보지 못한 질문이 있나요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 45,
     text: "함께 도전해보고 싶은 새로운 취미가 있나요?",
-    category: "love",
+    level: 2,
+    followUp: "그럼 진짜로 같이 배워볼래요?",
   },
   {
     id: 46,
     text: "기념일을 챙기는 것에 대해 어떻게 생각하세요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 47,
     text: "어떤 칭찬을 들었을 때 기분이 가장 좋은가요?",
-    category: "love",
+    level: 2,
   },
-  { id: 48, text: "'사랑'을 한 단어로 정의한다면?", category: "love" },
-  { id: 49, text: "혼자만의 시간이 꼭 필요한 편인가요?", category: "love" },
+  {
+    id: 48,
+    text: "썸이나 연애 초반에, 상대방한테 가장 바라는 행동이 있다면 뭐예요?",
+    level: 2,
+  },
+  { id: 49, text: "혼자만의 시간이 꼭 필요한 편인가요?", level: 2 },
   {
     id: 50,
     text: "선물을 받을 때, '실용적인 선물'과 '예쁜 선물' 중 어느 쪽이 더 좋은가요?",
-    category: "love",
+    level: 2,
   },
-  { id: 51, text: "학창 시절에 어떤 학생이었어요?", category: "love" },
+  { id: 51, text: "학창 시절에 어떤 학생이었어요?", level: 2 },
   {
     id: 52,
     text: "가장 자신 있는 요리가 있다면 무엇인가요?",
-    category: "love",
+    level: 2,
+    followUp: "다음에 저한테 해줄 수 있어요?",
   },
   {
     id: 53,
     text: "플레이리스트를 공유한다면, 가장 먼저 들려주고 싶은 노래는?",
-    category: "love",
+    level: 2,
   },
   {
     id: 54,
     text: "이른바 '남사친/여사친' 문제에 대해 어떻게 생각하세요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 55,
     text: "연인과 꼭 해보고 싶은 버킷리스트가 있나요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 56,
     text: "글(카톡, 편지)로 마음을 표현하는 것과 말로 표현하는 것 중 어떤 게 더 편한가요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 57,
     text: "주변 친구들은 보통 본인을 어떤 사람이라고 표현하나요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 58,
     text: "쉬는 날 주로 무엇을 하며 에너지를 얻는 편인가요?",
-    category: "love",
+    level: 2,
   },
   {
     id: 59,
-    text: "사소하지만 확실하게 행복을 느끼는 순간은 언제인가요?",
-    category: "love",
+    text: "연애할 때 나도 모르게 나오는 습관이나 버릇이 있다면?",
+    level: 2,
   },
   {
     id: 60,
     text: "오늘 대화에서 가장 인상 깊었던 점은 무엇인가요?",
-    category: "love",
+    level: 2,
   },
 ];
+
+/**
+ * Level 3 · 진심
+ * 상호 자기노출(reciprocal self-disclosure)을 유도하는 단계. "사랑/결혼"이 아니라
+ * 지금 이 만남과 서로에 대한 솔직한 감정에 초점을 맞춘다. 부담스러우면 언제든 패스.
+ */
+export const level3Questions: Question[] = [
+  {
+    id: 61,
+    text: "오늘 대화하면서 '어? 나랑 결이 좀 비슷한데?' 싶었던 순간이 있었나요?",
+    level: 3,
+    followUp: "구체적으로 어떤 부분에서 그렇게 느꼈어요?",
+  },
+  {
+    id: 62,
+    text: "저에 대해 궁금하지만 아직 못 물어본 질문이 있다면, 지금 편하게 물어봐도 돼요.",
+    level: 3,
+  },
+  {
+    id: 63,
+    text: "오늘 만나기 전 상상했던 저와, 지금 실제로 본 저는 얼마나 비슷했나요?",
+    level: 3,
+    followUp: "어떤 부분이 가장 다르게 느껴졌어요?",
+  },
+  {
+    id: 64,
+    text: "누군가에게 마음이 여는 데 시간이 걸리는 편이에요, 아니면 빨리 여는 편이에요?",
+    level: 3,
+  },
+  {
+    id: 65,
+    text: "요즘 마음이 복잡했던 일이 있었다면, 어떻게 풀어내는 편이에요?",
+    level: 3,
+  },
+  {
+    id: 66,
+    text: "연애를 하면서 나에 대해 새롭게 알게 된 게 있다면 무엇인가요?",
+    level: 3,
+  },
+  {
+    id: 67,
+    text: "저랑 있을 때 모습이랑 원래 성격, 얼마나 비슷한 것 같아요?",
+    level: 3,
+    followUp: "오늘 어떤 모습이 가장 저다웠어요?",
+  },
+  {
+    id: 68,
+    text: "사람들 앞에서는 잘 안 보여주지만, 가까워지면 보여주게 되는 모습이 있다면요?",
+    level: 3,
+  },
+  {
+    id: 69,
+    text: "지금까지 대화만 놓고 보면, 오늘 저와의 만남에 별점을 준다면 몇 점이에요?",
+    level: 3,
+    followUp: "그 점수를 준 이유가 궁금해요.",
+  },
+  {
+    id: 70,
+    text: "다음에 또 만난다면, 저랑 같이 해보고 싶은 게 있어요?",
+    level: 3,
+    followUp: "그럼 우리 진짜 그거 하러 갈까요?",
+  },
+  {
+    id: 71,
+    text: "오늘 대화 중에 가장 편하게, 크게 웃었던 순간은 언제였어요?",
+    level: 3,
+  },
+  {
+    id: 72,
+    text: "누군가를 좋아하게 될 때, 그 마음을 스스로 가장 먼저 눈치채는 순간은 언제예요?",
+    level: 3,
+  },
+  {
+    id: 73,
+    text: "지금 이 순간 솔직한 기분이 어때요? 편안한지, 아직 살짝 긴장되는지.",
+    level: 3,
+    followUp: "저도 솔직히 말하면요,",
+  },
+  {
+    id: 74,
+    text: "오늘 헤어지고 나서 저한테 가장 먼저 하고 싶은 말이 있다면요?",
+    level: 3,
+    followUp: "그럼 이따 진짜 그렇게 말해주기, 약속!",
+  },
+  {
+    id: 75,
+    text: "다음에 또 만난다면 언제쯤이 좋을 것 같아요?",
+    level: 3,
+  },
+];
+
+export const allQuestions: Question[] = [
+  ...level1Questions,
+  ...level2Questions,
+  ...level3Questions,
+];
+
+export const questionsByLevel: Record<1 | 2 | 3, Question[]> = {
+  1: level1Questions,
+  2: level2Questions,
+  3: level3Questions,
+};
+
+/** 레벨을 넘어가기 위해 최소한 진행해야 하는 질문 수 (레벨 게이트) */
+export const levelGateThreshold: Record<1 | 2 | 3, number> = {
+  1: 8,
+  2: 10,
+  3: level3Questions.length,
+};
