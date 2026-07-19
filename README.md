@@ -27,7 +27,7 @@
 
 ## 🚀 데모
 
-**Live Demo:** [https://disj11.github.io/qna-card/](https://disj11.github.io/qna-card/)
+**Live Demo:** [https://cards.slowletters.app/](https://cards.slowletters.app/)
 
 ## 🛠️ 기술 스택
 
@@ -36,7 +36,7 @@
 - **Build Tool**: Vite
 - **Routing**: React Router
 - **Package Manager**: pnpm
-- **Deployment**: GitHub Pages (GitHub Actions)
+- **Deployment**: Cloudflare Pages (Git 연동)
 - **P2P Library**: PeerJS (WebRTC)
 - **Test**: Vitest + Testing Library
 
@@ -60,7 +60,7 @@ pnpm install
 # 개발 서버 시작 (한 기기로 함께 / 혼자 미리보기 모드만 필요할 때)
 pnpm dev
 
-# 브라우저에서 http://localhost:5173/qna-card/ 접속
+# 브라우저에서 http://localhost:5173/ 접속
 ```
 
 ### 원거리 함께하기(멀티플레이어) 모드 개발
@@ -103,15 +103,26 @@ pnpm format
 
 ## 📦 배포
 
-이 프로젝트는 `main` 브랜치에 push되면 GitHub Actions(`.github/workflows/deploy.yml`)를 통해 자동으로 GitHub Pages에 배포됩니다.
+이 프로젝트는 **Cloudflare Pages**의 Git 연동으로 배포됩니다. `main` 브랜치에 push하면 Cloudflare가 저장소를 직접 빌드/배포하며, 그 외 브랜치/PR은 자동으로 프리뷰 URL이 생성됩니다. 별도의 GitHub Actions 워크플로우는 없습니다.
+
+프로젝트를 새로 연결할 때 Cloudflare 대시보드(Workers & Pages → Create → Connect to Git)에서 다음 값을 입력하면 됩니다.
+
+| 설정 | 값 |
+|---|---|
+| Build command | `pnpm run build` |
+| Build output directory | `dist` |
+| Root directory | `/` |
+
+프로덕션 도메인: `cards.slowletters.app` (Cloudflare 대시보드에서 커스텀 도메인으로 연결).
+
+클라이언트 사이드 라우팅을 위한 SPA 폴백은 `public/_redirects`(`/* /index.html 200`)로 처리됩니다.
 
 ## 🏗️ 프로젝트 구조
 
 ```
 qna-card/
 ├── public/
-│   ├── .nojekyll          # GitHub Pages 설정
-│   ├── 404.html           # GitHub Pages SPA 라우팅 우회
+│   ├── _redirects         # Cloudflare Pages SPA 라우팅 폴백
 │   └── manifest.json      # PWA 매니페스트
 ├── src/
 │   ├── pages/
@@ -133,7 +144,6 @@ qna-card/
 │   ├── App.tsx                     # 라우팅
 │   └── main.tsx                    # 엔트리 포인트
 ├── peer-server.js         # 로컬 개발용 PeerJS 시그널링 서버
-├── .github/workflows/deploy.yml
 ├── vite.config.ts
 └── tailwind.config.js
 ```

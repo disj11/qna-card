@@ -2,14 +2,14 @@
     "name": "질문카드 - 천천히 깊어지는 대화 카드",
     "short_name": "질문카드",
     "description": "워밍업-연결-진심, 3단계로 천천히 깊어지는 대화 카드",
-    "start_url": "/qna-card/",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#2B222D",
     "theme_color": "#2B222D",
     "orientation": "portrait-primary",
     "icons": [
         {
-            "src": "/qna-card/app-icon.svg",
+            "src": "/app-icon.svg",
             "sizes": "any",
             "type": "image/svg+xml",
             "purpose": "any maskable"
@@ -22,7 +22,7 @@
     ],
     "screenshots": [
         {
-            "src": "/qna-card/app-icon.svg",
+            "src": "/app-icon.svg",
             "sizes": "512x512",
             "type": "image/svg+xml",
             "form_factor": "narrow",

@@ -14,7 +14,7 @@ pnpm install
 pnpm run dev:full
 ```
 
-브라우저에서 `http://localhost:5173/qna-card/` 를 열면 끝입니다. `localhost`/`127.0.0.1`에서 접속하면 `peerConfig.ts`가 자동으로 로컬 PeerJS 서버(`localhost:9000`)를 사용하도록 분기합니다.
+브라우저에서 `http://localhost:5173/` 를 열면 끝입니다. `localhost`/`127.0.0.1`에서 접속하면 `peerConfig.ts`가 자동으로 로컬 PeerJS 서버(`localhost:9000`)를 사용하도록 분기합니다.
 
 ## 🎮 로컬에서 멀티플레이어 테스트하기
 
@@ -44,7 +44,7 @@ pnpm dev
 ```
 출력 확인:
 ```
-➜  Local:   http://localhost:5173/qna-card/
+➜  Local:   http://localhost:5173/
 ```
 
 두 프로세스가 모두 실행 중이어야 멀티플레이어가 동작합니다.
@@ -79,7 +79,7 @@ pnpm dev
 
 4. **다른 기기에서 접속**
    ```
-   http://192.168.1.100:5173/qna-card/
+   http://192.168.1.100:5173/
    ```
 
 ## 🌍 프로덕션 시그널링 서버
