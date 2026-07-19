@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { focusRing, motion, radius } from "../design-system/tokens";
 
 interface GameCardProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  icon: ReactNode;
+  icon?: ReactNode;
   title: string;
   description: string;
   /** 아이콘 배지와 좌측 포인트 라인에 쓰이는 은은한 포인트 컬러 */
@@ -35,13 +35,15 @@ export default function GameCard({
         style={{ borderLeft: `3px solid ${accent}` }}
       >
         <div className="relative z-10 flex flex-col items-center justify-center text-center space-y-4 h-full">
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
-            style={{ backgroundColor: `${accent}26` }}
-            aria-hidden="true"
-          >
-            {icon}
-          </div>
+          {icon && (
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
+              style={{ backgroundColor: `${accent}26` }}
+              aria-hidden="true"
+            >
+              {icon}
+            </div>
+          )}
           <h2 className="text-xl sm:text-2xl font-bold text-white">{title}</h2>
           <p className="text-sm sm:text-base text-white/60">{description}</p>
           {meta}

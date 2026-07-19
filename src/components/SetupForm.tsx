@@ -4,7 +4,7 @@ import GlassPanel from "./GlassPanel";
 import TextInput from "./TextInput";
 
 interface SetupFormProps {
-  icon: ReactNode;
+  icon?: ReactNode;
   title: string;
   description: string;
   nickname: string;
@@ -45,9 +45,11 @@ export default function SetupForm({
   return (
     <GlassPanel size="lg" className="max-w-md w-full">
       <div className="text-center mb-8">
-        <div className="text-6xl mb-4" aria-hidden="true">
-          {icon}
-        </div>
+        {icon && (
+          <div className="text-6xl mb-4" aria-hidden="true">
+            {icon}
+          </div>
+        )}
         <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>
         <p className="text-white/70">{description}</p>
       </div>

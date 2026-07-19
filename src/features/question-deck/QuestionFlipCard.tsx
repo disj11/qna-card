@@ -103,7 +103,7 @@ export default function QuestionFlipCard({
           {question.text}
         </div>
         {question.followUp && (
-          <p className={followUpClass}>💬 {question.followUp}</p>
+          <p className={followUpClass}>{question.followUp}</p>
         )}
       </div>
     </div>

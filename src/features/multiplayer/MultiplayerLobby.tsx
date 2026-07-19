@@ -46,7 +46,6 @@ export default function MultiplayerLobby({
       <GlassPanel size="lg" className="max-w-2xl w-full">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="text-6xl mb-4">🎮</div>
           <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
             멀티플레이어 대기실
           </h1>
@@ -137,7 +136,7 @@ export default function MultiplayerLobby({
                         <StatusBadge tone="info">나</StatusBadge>
                       )}
                       {player.isHost && (
-                        <StatusBadge tone="warning">👑 호스트</StatusBadge>
+                        <StatusBadge tone="warning">호스트</StatusBadge>
                       )}
                     </div>
                   </div>
@@ -194,7 +193,7 @@ export default function MultiplayerLobby({
               fullWidth
               disabledReason={!canStartGame ? startDisabledReason : undefined}
             >
-              🎮 게임 시작
+              게임 시작
             </Button>
           </div>
         )}
@@ -207,7 +206,7 @@ export default function MultiplayerLobby({
         {/* Tips */}
         <div className="mt-6 bg-blue-500/20 rounded-xl p-4 border border-blue-400/30">
           <p className="text-blue-200 text-sm">
-            💡 <strong>팁:</strong> 친구들과 함께 게임을 즐기세요! 방 코드를
+            <strong>팁:</strong> 친구들과 함께 게임을 즐기세요! 방 코드를
             공유하면 누구나 입장할 수 있습니다.
           </p>
         </div>

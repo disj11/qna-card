@@ -197,7 +197,6 @@ export default function TogetherPage({ onBack }: TogetherPageProps) {
       <PageShell centered>
         <GlassPanel size="lg" className="max-w-lg w-full">
           <div className="text-center mb-6">
-            <div className="text-6xl mb-4">💝</div>
             <h1 className="text-3xl font-bold text-white mb-2">
               한 기기로 함께
             </h1>
@@ -274,7 +273,6 @@ export default function TogetherPage({ onBack }: TogetherPageProps) {
     return (
       <PageShell centered>
         <GlassPanel size="lg" className="max-w-lg w-full text-center">
-          <div className="text-6xl mb-4">🎉</div>
           <h1 className="text-3xl font-bold text-white mb-2 break-keep">
             오늘 {totalAnswered}개의 질문을 나눴어요
           </h1>
@@ -352,7 +350,6 @@ export default function TogetherPage({ onBack }: TogetherPageProps) {
       <div className="container mx-auto px-4 py-4 max-w-2xl">
         <GameHeader
           title="한 기기로 함께"
-          icon="💝"
           onBack={endSession}
           backLabel="그만하기"
           meta={
@@ -385,7 +382,8 @@ export default function TogetherPage({ onBack }: TogetherPageProps) {
                   isActive ? { borderColor: levelMeta[l].color } : undefined
                 }
               >
-                {unlocked ? levelMeta[l].emoji : "🔒"} {levelMeta[l].label}
+                {unlocked && `${levelMeta[l].emoji} `}
+                {levelMeta[l].label}
               </button>
             );
           })}
@@ -401,7 +399,7 @@ export default function TogetherPage({ onBack }: TogetherPageProps) {
             {pickResult && (
               <div className="text-center mb-4 animate-slide-up">
                 <span className="inline-block bg-[#CBB794] text-[#211A17] font-bold px-4 py-2 rounded-full shadow-lg">
-                  🎲 이번엔 {pickResult}님 먼저!
+                  이번엔 {pickResult}님 먼저!
                 </span>
               </div>
             )}
@@ -417,7 +415,7 @@ export default function TogetherPage({ onBack }: TogetherPageProps) {
 
             <div className="flex justify-center gap-3 mt-6">
               <Button onClick={pickWhoAnswersFirst} variant="secondary">
-                🎲 먼저 답할 사람
+                먼저 답할 사람
               </Button>
             </div>
 

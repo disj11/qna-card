@@ -122,7 +122,7 @@ export default function ChatBox({
           {messages.length === 0 ? (
             <div className="text-center text-white/50 text-sm py-8">
               <p>아직 메시지가 없습니다</p>
-              <p className="mt-2">첫 메시지를 보내보세요! 💬</p>
+              <p className="mt-2">첫 메시지를 보내보세요!</p>
             </div>
           ) : (
             messages.map((msg) => (

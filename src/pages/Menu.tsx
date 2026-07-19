@@ -38,7 +38,7 @@ export default function Menu() {
         {/* Header */}
         <header className="text-center mb-10">
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3 animate-slide-up">
-            💝 질문카드
+            질문카드
           </h1>
           <p
             className="text-white/70 text-lg animate-slide-up"
@@ -75,7 +75,6 @@ export default function Menu() {
           <GameCard
             onClick={() => navigate("/together")}
             aria-label="한 기기로 함께 시작"
-            icon="📱"
             title="한 기기로 함께"
             description="폰 하나를 같이 보며, 번갈아 답해요"
             accent="#D9695A"
@@ -91,7 +90,6 @@ export default function Menu() {
           <GameCard
             onClick={() => navigate("/solo")}
             aria-label="혼자 미리보기 시작"
-            icon="🔍"
             title="혼자 미리보기"
             description="만나기 전, 질문들을 미리 둘러보세요"
             accent="#8FA98C"
@@ -102,7 +100,6 @@ export default function Menu() {
           <GameCard
             onClick={() => navigate("/remote")}
             aria-label="원거리 함께하기 시작"
-            icon="🌐"
             title="원거리 함께하기"
             description="서로 다른 폰으로 방 코드를 만들어 연결해요"
             accent="#C99A4A"

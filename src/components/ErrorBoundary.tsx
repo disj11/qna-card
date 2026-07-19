@@ -46,7 +46,6 @@ export default class ErrorBoundary extends Component<Props, State> {
       return (
         <PageShell centered>
           <GlassPanel size="lg" className="max-w-md w-full text-center">
-            <div className="text-6xl mb-4">😢</div>
             <h1 className="text-2xl font-bold text-white mb-2">
               앗! 문제가 발생했습니다
             </h1>

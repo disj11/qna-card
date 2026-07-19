@@ -40,7 +40,7 @@ export default function SoloPreviewPage({ onBack }: SoloPreviewPageProps) {
   return (
     <PageShell>
       <StickyPageHeader
-        title="💝 혼자 미리보기"
+        title="혼자 미리보기"
         onBack={onBack}
         backLabel="메뉴로 돌아가기"
       >

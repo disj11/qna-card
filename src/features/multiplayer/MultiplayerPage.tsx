@@ -132,7 +132,6 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
       <PageShell centered>
         <GlassPanel size="lg" className="max-w-md w-full">
           <div className="text-center mb-8">
-            <div className="text-6xl mb-4">🌐</div>
             <h1 className="text-3xl font-bold text-white mb-2">
               원거리 함께하기
             </h1>
@@ -143,7 +142,7 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
 
           <div className="space-y-4">
             <Button onClick={() => setSetupMode("create")} size="lg" fullWidth>
-              🎮 방 만들기
+              방 만들기
             </Button>
             <Button
               onClick={() => setSetupMode("join")}
@@ -151,7 +150,7 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
               size="lg"
               fullWidth
             >
-              🚪 방 참가하기
+              방 참가하기
             </Button>
             <Button onClick={onBack} variant="secondary" fullWidth>
               돌아가기
@@ -167,7 +166,6 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
     return (
       <PageShell centered>
         <SetupForm
-          icon="🎮"
           title="방 만들기"
           description="닉네임을 입력해주세요"
           nickname={nickname}
@@ -187,7 +185,6 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
     return (
       <PageShell centered>
         <SetupForm
-          icon="🚪"
           title="방 참가하기"
           description="닉네임과 방 코드를 입력해주세요"
           nickname={nickname}
@@ -241,7 +238,6 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
     return (
       <PageShell centered>
         <GlassPanel size="lg" className="max-w-lg w-full text-center">
-          <div className="text-6xl mb-4">🎉</div>
           <h1 className="text-3xl font-bold text-white mb-2 break-keep">
             오늘 {totalAnswered}개의 질문을 나눴어요
           </h1>
@@ -277,7 +273,7 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
       </div>
 
       <StickyPageHeader
-        title="💝 질문카드 (원거리 함께하기)"
+        title="질문카드 (원거리 함께하기)"
         onBack={handleLeave}
         backLabel="나가기"
         topRight={
@@ -300,7 +296,7 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
           >
             <span className="text-white font-semibold">
               {multiplayer.isMyTurn()
-                ? "🎯 내가 카드를 넘길 차례!"
+                ? "내가 카드를 넘길 차례!"
                 : `${currentTurnPlayer?.nickname || ""}님이 카드를 넘길 차례`}
             </span>
           </div>
@@ -339,7 +335,7 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
             {gameState.pickResult && (
               <div className="text-center mb-4 animate-slide-up">
                 <span className="inline-block bg-[#CBB794] text-[#211A17] font-bold px-4 py-2 rounded-full shadow-lg">
-                  🎲 이번엔 {gameState.pickResult}님 먼저!
+                  이번엔 {gameState.pickResult}님 먼저!
                 </span>
               </div>
             )}
@@ -359,7 +355,7 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
                 variant="secondary"
                 disabled={!multiplayer.isMyTurn() || isTransitioning}
               >
-                🎲 먼저 답할 사람
+                먼저 답할 사람
               </Button>
             </div>
 
@@ -399,9 +395,8 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
 
       {/* Players Info */}
       <div className="fixed bottom-4 left-4 z-30 bg-black/30 backdrop-blur-md rounded-2xl p-4 max-w-xs">
-        <h3 className="text-white font-bold mb-2 flex items-center gap-2">
-          <span>👥</span>
-          <span>참가자 ({multiplayer.players.size})</span>
+        <h3 className="text-white font-bold mb-2">
+          참가자 ({multiplayer.players.size})
         </h3>
         <div className="space-y-2 max-h-40 overflow-y-auto">
           {Array.from(multiplayer.players.values()).map((player) => (
@@ -419,7 +414,9 @@ export default function MultiplayerPage({ onBack }: MultiplayerPageProps) {
                 }`}
               ></div>
               <span>{player.nickname}</span>
-              {player.isHost && <span>👑</span>}
+              {player.isHost && (
+                <span className="text-white/40 text-xs">(호스트)</span>
+              )}
             </div>
           ))}
         </div>

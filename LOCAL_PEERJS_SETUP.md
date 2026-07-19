@@ -1,8 +1,8 @@
-# 🚀 PeerJS 로컬 개발 & 문제 해결 가이드
+# PeerJS 로컬 개발 & 문제 해결 가이드
 
 "원거리 함께하기" 모드는 P2P(WebRTC) 연결 전에 서로의 위치를 알려주는 시그널링 서버(PeerJS 서버)가 필요합니다. 프로덕션에서는 공개 PeerJS 서버(`0.peerjs.com`)를 사용하고(`src/features/multiplayer/lib/peerConfig.ts`), 로컬 개발에서는 직접 서버를 띄워 테스트합니다.
 
-## 📦 2분 빠른 시작
+## 2분 빠른 시작
 
 ```bash
 # 저장소 클론 & 설치
@@ -16,7 +16,7 @@ pnpm run dev:full
 
 브라우저에서 `http://localhost:5173/` 를 열면 끝입니다. `localhost`/`127.0.0.1`에서 접속하면 `peerConfig.ts`가 자동으로 로컬 PeerJS 서버(`localhost:9000`)를 사용하도록 분기합니다.
 
-## 🎮 로컬에서 멀티플레이어 테스트하기
+## 로컬에서 멀티플레이어 테스트하기
 
 같은 컴퓨터의 두 브라우저(예: 일반 창 + 시크릿 창)로 테스트할 수 있습니다.
 
@@ -24,7 +24,7 @@ pnpm run dev:full
 2. **브라우저 2 (시크릿 모드)**: 메뉴 → "원거리 함께하기" → "방 참가하기" → 닉네임과 방 코드 입력
 3. 브라우저 2에서 "준비 완료" → 브라우저 1에서 "게임 시작"
 
-## 🔧 수동으로 실행하기
+## 수동으로 실행하기
 
 `dev:full` 대신 서버를 따로 띄울 수도 있습니다.
 
@@ -34,8 +34,8 @@ pnpm run peer
 ```
 출력 확인:
 ```
-🚀 PeerJS Server started on port 9000
-📍 Server ready at: http://localhost:9000/
+PeerJS Server started on port 9000
+Server ready at: http://localhost:9000/
 ```
 
 **터미널 2 — 개발 서버**
@@ -49,7 +49,7 @@ pnpm dev
 
 두 프로세스가 모두 실행 중이어야 멀티플레이어가 동작합니다.
 
-## 🌐 같은 네트워크의 다른 기기에서 접속하기
+## 같은 네트워크의 다른 기기에서 접속하기
 
 친구의 폰이나 다른 컴퓨터에서 접속하려면:
 
@@ -82,7 +82,7 @@ pnpm dev
    http://192.168.1.100:5173/
    ```
 
-## 🌍 프로덕션 시그널링 서버
+## 프로덕션 시그널링 서버
 
 기본값은 공개 PeerJS 서버(`0.peerjs.com`, `VITE_PEER_PROD_HOST`로 재정의 가능)입니다. 이 서버는 다음과 같은 한계가 있습니다.
 
@@ -91,7 +91,7 @@ pnpm dev
 
 트래픽이 늘거나 안정성이 중요해지면, `peer` npm 패키지([peers/peerjs-server](https://github.com/peers/peerjs-server))를 Render, Railway, Fly.io 등에 별도 배포하고 `VITE_PEER_PROD_HOST`(및 필요시 `VITE_PEER_PORT`)를 해당 서버로 지정하면 됩니다.
 
-## 🐛 문제 해결
+## 문제 해결
 
 ### "생성 중..."에서 멈춤 (로컬 개발)
 
@@ -136,7 +136,7 @@ Get-Process -Id (Get-NetTCPConnection -LocalPort 9000).OwningProcess | Stop-Proc
 
 멀티플레이어가 계속 작동하지 않으면 **"한 기기로 함께"** 또는 **"혼자 미리보기"** 모드를 사용하세요 — 네트워크 연결 없이 모든 질문을 동일하게 볼 수 있습니다.
 
-## 📚 참고 자료
+## 참고 자료
 
 - [PeerJS 공식 문서](https://peerjs.com/docs/)
 - [PeerJS 서버 GitHub](https://github.com/peers/peerjs-server)

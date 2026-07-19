@@ -19,10 +19,10 @@ const sampleCards: { level: QuestionLevel; question: (typeof level1Questions)[nu
   ];
 
 const moments = [
-  { icon: "💐", text: "처음 만난 자리에서 무슨 말을 꺼내야 할지 막막할 때" },
-  { icon: "🤐", text: "마주 앉았는데 대화가 뚝뚝 끊길 때" },
-  { icon: "🌙", text: "예의상 나누는 대화 말고, 진짜 이야기를 하고 싶을 때" },
-  { icon: "📍", text: "멀리 떨어져 있어도 같이 대화를 이어가고 싶을 때" },
+  "처음 만난 자리에서 무슨 말을 꺼내야 할지 막막할 때",
+  "마주 앉았는데 대화가 뚝뚝 끊길 때",
+  "예의상 나누는 대화 말고, 진짜 이야기를 하고 싶을 때",
+  "멀리 떨어져 있어도 같이 대화를 이어가고 싶을 때",
 ];
 
 const steps = [
@@ -33,19 +33,16 @@ const steps = [
 
 const modes = [
   {
-    icon: "📱",
     title: "한 기기로 함께",
     description: "폰 하나를 같이 보며, 번갈아 답해요",
     accent: "#D9695A",
   },
   {
-    icon: "🔍",
     title: "혼자 미리보기",
     description: "만나기 전, 질문들을 미리 둘러보세요",
     accent: "#8FA98C",
   },
   {
-    icon: "🌐",
     title: "원거리 함께하기",
     description: "서로 다른 폰으로 방 코드를 만들어 연결해요",
     accent: "#C99A4A",
@@ -62,7 +59,7 @@ export default function LandingPage() {
         {/* Hero */}
         <section className="pt-16 pb-12 sm:pt-24 sm:pb-16 text-center">
           <h1 className="text-4xl sm:text-6xl font-bold text-white mb-4 animate-slide-up">
-            💝 질문카드
+            질문카드
           </h1>
           <p
             className="max-w-xl mx-auto text-white/70 text-lg sm:text-xl mb-2 animate-slide-up"
@@ -124,12 +121,9 @@ export default function LandingPage() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
             {moments.map((moment) => (
-              <GlassPanel key={moment.text} variant="subtle" className="flex items-start gap-3">
-                <span className="text-2xl flex-none" aria-hidden="true">
-                  {moment.icon}
-                </span>
-                <span className="text-white/80 text-sm sm:text-base pt-0.5">
-                  {moment.text}
+              <GlassPanel key={moment} variant="subtle">
+                <span className="text-white/80 text-sm sm:text-base">
+                  {moment}
                 </span>
               </GlassPanel>
             ))}
@@ -167,13 +161,6 @@ export default function LandingPage() {
                 className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 text-center"
                 style={{ borderLeft: `3px solid ${mode.accent}` }}
               >
-                <div
-                  className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center text-3xl"
-                  style={{ backgroundColor: `${mode.accent}26` }}
-                  aria-hidden="true"
-                >
-                  {mode.icon}
-                </div>
                 <h3 className="text-xl font-bold text-white mb-2">
                   {mode.title}
                 </h3>
@@ -186,9 +173,6 @@ export default function LandingPage() {
         {/* Trust */}
         <section className="pb-16 sm:pb-20">
           <GlassPanel size="lg" className="max-w-2xl mx-auto text-center">
-            <div className="text-4xl mb-3" aria-hidden="true">
-              🔒
-            </div>
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-3">
               둘만의 대화, 서버에 남지 않아요
             </h2>
