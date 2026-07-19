@@ -115,14 +115,13 @@ pnpm format
 
 프로덕션 도메인: `cards.slowletters.app` (Cloudflare 대시보드에서 커스텀 도메인으로 연결).
 
-클라이언트 사이드 라우팅을 위한 SPA 폴백은 `public/_redirects`(`/* /index.html 200`)로 처리됩니다.
+클라이언트 사이드 라우팅을 위한 SPA 폴백은 `wrangler.jsonc`의 `assets.not_found_handling: "single-page-application"`으로 처리됩니다. (이 프로젝트는 Cloudflare의 신형 Workers 정적 에셋 백엔드로 배포되며, 이 경우 `public/_redirects`의 캐치올 리다이렉트는 오탐 무한 루프 에러를 유발하므로 사용하지 않습니다.)
 
 ## 프로젝트 구조
 
 ```
 qna-card/
 ├── public/
-│   ├── _redirects         # Cloudflare Pages SPA 라우팅 폴백
 │   └── manifest.json      # PWA 매니페스트
 ├── src/
 │   ├── pages/
@@ -144,6 +143,7 @@ qna-card/
 │   ├── App.tsx                     # 라우팅
 │   └── main.tsx                    # 엔트리 포인트
 ├── peer-server.js         # 로컬 개발용 PeerJS 시그널링 서버
+├── wrangler.jsonc         # Cloudflare 정적 에셋(SPA) 배포 설정
 ├── vite.config.ts
 └── tailwind.config.js
 ```
