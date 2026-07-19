@@ -2,7 +2,7 @@ import type { Question } from "../types";
 
 /**
  * Level 1 · 워밍업
- * 부담 없이 답할 수 있는 열린 질문. 애프터 초반 어색함을 풀기 위한 단계.
+ * 부담 없이 답할 수 있는 열린 질문. 대화 초반 어색함을 풀기 위한 단계.
  */
 export const level1Questions: Question[] = [
   {

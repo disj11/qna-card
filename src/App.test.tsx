@@ -11,12 +11,20 @@ const renderApp = (path = "/") =>
   );
 
 describe("App routing", () => {
-  it("renders the main menu", () => {
+  it("renders the landing page", () => {
     renderApp("/qna-card/");
 
     expect(
       screen.getByRole("heading", { name: /질문카드/i })
     ).toBeInTheDocument();
+    expect(
+      screen.getAllByRole("button", { name: /지금 시작하기/i }).length
+    ).toBeGreaterThan(0);
+  });
+
+  it("renders the mode selection menu", () => {
+    renderApp("/qna-card/start");
+
     expect(
       screen.getByRole("button", { name: /한 기기로 함께 시작/i })
     ).toBeInTheDocument();
@@ -35,7 +43,7 @@ describe("App routing", () => {
       screen.getByRole("heading", { name: /페이지를 찾을 수 없습니다/i })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /메인 메뉴로 돌아가기/i })
+      screen.getByRole("button", { name: /홈으로 돌아가기/i })
     ).toBeInTheDocument();
   });
 });

@@ -9,7 +9,7 @@ interface NotFoundProps {
 
 export default function NotFound({
   title = "페이지를 찾을 수 없습니다",
-  message = "주소를 다시 확인하거나 메인 메뉴로 돌아가 주세요.",
+  message = "주소를 다시 확인하거나 홈으로 돌아가 주세요.",
 }: NotFoundProps) {
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ export default function NotFound({
         icon="404"
         title={title}
         message={message}
-        actionLabel="메인 메뉴로 돌아가기"
+        actionLabel="홈으로 돌아가기"
         onAction={() => navigate("/")}
       />
     </PageShell>

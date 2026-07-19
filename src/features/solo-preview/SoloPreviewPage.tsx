@@ -45,7 +45,7 @@ export default function SoloPreviewPage({ onBack }: SoloPreviewPageProps) {
         backLabel="메뉴로 돌아가기"
       >
         <p className="text-white/50 text-sm">
-          애프터 전, 어떤 질문이 나올지 미리 훑어보세요
+          만나기 전, 어떤 질문이 나올지 미리 훑어보세요
         </p>
 
         {/* Show All Toggle */}
@@ -113,10 +113,6 @@ export default function SoloPreviewPage({ onBack }: SoloPreviewPageProps) {
         ))}
       </main>
 
-      {/* Footer */}
-      <footer className="text-center py-4">
-        <p className="text-white/40 text-sm">Made by [disj11] with ❤️</p>
-      </footer>
     </PageShell>
   );
 }

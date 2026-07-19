@@ -15,6 +15,26 @@ export default function Menu() {
   return (
     <PageShell>
       <div className="container mx-auto px-4 py-8">
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 text-white/50 hover:text-white/80 transition-colors text-sm mb-6"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          <span>홈으로</span>
+        </button>
+
         {/* Header */}
         <header className="text-center mb-10">
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3 animate-slide-up">
@@ -24,7 +44,7 @@ export default function Menu() {
             className="text-white/70 text-lg animate-slide-up"
             style={{ animationDelay: "0.1s" }}
           >
-            소개팅 애프터, 마주 앉은 두 사람을 위한 대화 카드
+            마주 앉은 두 사람을 위한 대화 카드
           </p>
         </header>
 
@@ -91,13 +111,6 @@ export default function Menu() {
           />
         </div>
 
-        {/* Footer */}
-        <footer
-          className="text-center mt-12 animate-slide-up"
-          style={{ animationDelay: "0.5s" }}
-        >
-          <p className="text-white/40 text-sm">Made by [disj11] with ❤️</p>
-        </footer>
       </div>
     </PageShell>
   );
